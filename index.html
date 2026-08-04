@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pine Hills School - Coordinator Diary Dashboard</title>
+  <style>
+    :root {
+      --primary-color: #1e3a8a;
+      --primary-accent: #2563eb;
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --border-color: #cbd5e1;
+      --success-color: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 10px 15px;
+      height: 100vh;
+      overflow-y: auto; /* Fallback for small screens */
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .app-header h1 {
+      font-size: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .app-header p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    /* Main Dashboard Layout */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1024px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .card h2 {
+      font-size: 15px;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Form Fields Styling */
+    .form-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 8px;
+      flex: 1;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      font-size: 12px;
+      background-color: #fdfdfd;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-accent);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+
+    /* 2-Column Subject Grid */
+    .subjects-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    textarea {
+      resize: none;
+      height: 38px;
+    }
+
+    .btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+
+    .btn-submit {
+      width: 100%;
+      margin-top: 5px;
+      padding: 10px;
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+    }
+
+    .btn-success:hover {
+      background-color: #059669;
+    }
+
+    .btn-secondary {
+      background-color: #64748b;
+    }
+
+    /* Registered Classes Dashboard */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 10px;
+      background: #fafafa;
+    }
+
+    .summary-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .summary-card-header h3 {
+      font-size: 14px;
+      color: var(--primary-color);
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .summary-table th, .summary-table td {
+      padding: 3px 6px;
+      border: 1px solid #e2e8f0;
+      text-align: left;
+    }
+
+    .summary-table th {
+      background: #f1f5f9;
+      width: 35%;
+      color: #334155;
+    }
+
+    .btn-delete-class {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .actions-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    /* Print Setup */
+    .slips-container { display: none; }
+
+    .slip {
+      border: 2px solid var(--primary-color);
+      padding: 20px;
+      border-radius: 8px;
+      background: #fff;
+      margin-bottom: 20px;
+      page-break-after: always;
+    }
+
+    .slip-header { text-align: center; margin-bottom: 12px; border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; }
+    .slip-header h1 { font-size: 20px; color: var(--primary-color); }
+    .slip-info { display: flex; justify-content: space-between; background: #eff6ff; padding: 6px 12px; font-weight: bold; font-size: 12px; margin-bottom: 12px; }
+    .diary-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    .diary-table th, .diary-table td { border: 1px solid #cbd5e1; padding: 6px 10px; font-size: 12px; }
+    .diary-table th { background-color: #f1f5f9; color: var(--primary-color); width: 30%; }
+    .slip-footer-note { background: #fef3c7; border: 1px solid #fde68a; padding: 8px; font-size: 11px; margin-bottom: 12px; }
+    .slip-signatures { display: flex; justify-content: space-between; margin-top: 20px; font-size: 11px; font-weight: bold; border-top: 1px solid var(--border-color); padding-top: 8px; }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .app-header, .main-grid, .actions-bar { display: none !important; }
+      .slips-container { display: block !important; }
+      .slip { border: 2px solid #000; margin-bottom: 0; }
+      .slip-header h1 { color: #000; }
+      .slip-info { background: #f8fafc; border: 1px solid #ccc; }
+      .diary-table th { background: #eee; color: #000; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-header">
+    <div>
+      <h1>Pine Hills School</h1>
+      <p>Coordinator Portal — Daily Class Diary Entry</p>
+    </div>
+    <div id="liveDate" style="font-weight: bold; font-size: 13px;"></div>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- Left Column: Compact Period Entry Form -->
+    <div class="card">
+      <h2>Period Entry Form</h2>
+      <form id="entryForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="className">Select Class</label>
+            <select id="className" required>
+              <option value="">-- Choose Class --</option>
+              <option value="Playgroup">Playgroup</option>
+              <option value="Nursery">Nursery</option>
+              <option value="Prep">Prep</option>
+              <option value="Class 1">Class 1</option>
+              <option value="Class 2">Class 2</option>
+              <option value="Class 3">Class 3</option>
+              <option value="Class 4">Class 4</option>
+              <option value="Class 5">Class 5</option>
+              <option value="Class 6">Class 6</option>
+              <option value="Class 7">Class 7</option>
+              <option value="Class 8">Class 8</option>
+              <option value="Class 9">Class 9</option>
+              <option value="Class 10">Class 10</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="diaryDate">Date</label>
+            <input type="date" id="diaryDate" required>
+          </div>
+        </div>
+
+        <!-- 2-Column Grid for Subjects (No Scroll Area) -->
+        <div class="subjects-grid">
+          <div class="form-group">
+            <label for="english">English</label>
+            <textarea id="english" placeholder="English homework..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="urdu">Urdu</label>
+            <textarea id="urdu" placeholder="Urdu homework..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="math">Math</label>
+            <textarea id="math" placeholder="Math homework..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="islamiyat">Islamiyat</label>
+            <textarea id="islamiyat" placeholder="Islamiyat homework..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="sst">SST</label>
+            <textarea id="sst" placeholder="SST homework..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="science">Science</label>
+            <textarea id="science" placeholder="Science homework..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 4px;">
+          <label for="generalNote">Announcements / General Note</label>
+          <textarea id="generalNote" placeholder="e.g. Test on Monday..." style="height: 35px;"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-submit">Save / Update Class Diary</button>
+      </form>
+    </div>
+
+    <!-- Right Column: Registered Cards & Quick Actions -->
+    <div>
+      <div class="card">
+        <h2>
+          <span>Saved Class Cards</span>
+          <span id="classCountBadge" style="font-size: 11px; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 10px;">0 Saved</span>
+        </h2>
+        
+        <div class="actions-bar">
+          <button class="btn btn-success" style="flex:1;" onclick="generateAndPrintAll()">🖨️ Print / Save All Diaries (PDF)</button>
+          <button class="btn btn-secondary" onclick="clearAllData()">Reset All</button>
+        </div>
+
+        <div id="summaryContainer" class="summary-grid">
+          <!-- Live Saved Class Cards -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Print Layout Structure -->
+  <div id="slipsContainer" class="slips-container"></div>
+
+  <script>
+    let diaryStore = {};
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    document.getElementById('diaryDate').value = todayStr;
+    document.getElementById('liveDate').innerText = `Date: ${todayStr}`;
+
+    const entryForm = document.getElementById('entryForm');
+
+    document.getElementById('className').addEventListener('change', function() {
+      const selectedClass = this.value;
+      if (diaryStore[selectedClass]) {
+        const data = diaryStore[selectedClass];
+        document.getElementById('english').value = data.english !== 'No homework' ? data.english : '';
+        document.getElementById('urdu').value = data.urdu !== 'No homework' ? data.urdu : '';
+        document.getElementById('math').value = data.math !== 'No homework' ? data.math : '';
+        document.getElementById('islamiyat').value = data.islamiyat !== 'No homework' ? data.islamiyat : '';
+        document.getElementById('sst').value = data.sst !== 'No homework' ? data.sst : '';
+        document.getElementById('science').value = data.science !== 'No homework' ? data.science : '';
+        document.getElementById('generalNote').value = data.generalNote !== 'Kindly check and sign the diary daily.' ? data.generalNote : '';
+      } else {
+        clearSubjectFields();
+      }
+    });
+
+    function clearSubjectFields() {
+      document.getElementById('english').value = '';
+      document.getElementById('urdu').value = '';
+      document.getElementById('math').value = '';
+      document.getElementById('islamiyat').value = '';
+      document.getElementById('sst').value = '';
+      document.getElementById('science').value = '';
+      document.getElementById('generalNote').value = '';
+    }
+
+    entryForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const className = document.getElementById('className').value;
+      const date = document.getElementById('diaryDate').value;
+
+      if (!className) {
+        alert('Please select a class first!');
+        return;
+      }
+
+      diaryStore[className] = {
+        date: date,
+        english: document.getElementById('english').value.trim() || 'No homework',
+        urdu: document.getElementById('urdu').value.trim() || 'No homework',
+        math: document.getElementById('math').value.trim() || 'No homework',
+        islamiyat: document.getElementById('islamiyat').value.trim() || 'No homework',
+        sst: document.getElementById('sst').value.trim() || 'No homework',
+        science: document.getElementById('science').value.trim() || 'No homework',
+        generalNote: document.getElementById('generalNote').value.trim() || 'Kindly check and sign the diary daily.'
+      };
+
+      renderSummary();
+    });
+
+    function renderSummary() {
+      const container = document.getElementById('summaryContainer');
+      const countBadge = document.getElementById('classCountBadge');
+      container.innerHTML = '';
+
+      const keys = Object.keys(diaryStore);
+      countBadge.innerText = `${keys.length} Saved`;
+
+      if (keys.length === 0) {
+        container.innerHTML = '<p style="font-size: 12px; color: #94a3b8; grid-column: 1/-1;">No class diaries added yet.</p>';
+        return;
+      }
+
+      keys.forEach(cls => {
+        const item = diaryStore[cls];
+        const cardHtml = `
+          <div class="summary-card">
+            <div class="summary-card-header">
+              <h3>${cls}</h3>
+              <button class="btn-delete-class" onclick="deleteClass('${cls}')">Delete</button>
+            </div>
+            <table class="summary-table">
+              <tr><th>Eng</th><td>${item.english}</td></tr>
+              <tr><th>Urdu</th><td>${item.urdu}</td></tr>
+              <tr><th>Math</th><td>${item.math}</td></tr>
+              <tr><th>Isl</th><td>${item.islamiyat}</td></tr>
+              <tr><th>SST</th><td>${item.sst}</td></tr>
+              <tr><th>Sci</th><td>${item.science}</td></tr>
+            </table>
+          </div>
+        `;
+        container.innerHTML += cardHtml;
+      });
+    }
+
+    function deleteClass(cls) {
+      delete diaryStore[cls];
+      renderSummary();
+    }
+
+    function clearAllData() {
+      if (confirm('Are you sure you want to reset all saved class diaries?')) {
+        diaryStore = {};
+        clearSubjectFields();
+        document.getElementById('className').value = '';
+        renderSummary();
+      }
+    }
+
+    function generateAndPrintAll() {
+      const keys = Object.keys(diaryStore);
+      if (keys.length === 0) {
+        alert('Please add diary entries for at least one class before printing!');
+        return;
+      }
+
+      const slipsContainer = document.getElementById('slipsContainer');
+      slipsContainer.innerHTML = '';
+
+      keys.forEach(cls => {
+        const item = diaryStore[cls];
+        const slipHtml = `
+          <div class="slip">
+            <div class="slip-header">
+              <h1>PINE HILLS SCHOOL</h1>
+              <p>Daily Class Diary Slip</p>
+            </div>
+
+            <div class="slip-info">
+              <div>Class: <span>${cls}</span></div>
+              <div>Date: <span>${item.date}</span></div>
+            </div>
+
+            <table class="diary-table">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Homework / Classwork</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th>English</th><td>${item.english}</td></tr>
+                <tr><th>Urdu</th><td>${item.urdu}</td></tr>
+                <tr><th>Math</th><td>${item.math}</td></tr>
+                <tr><th>Islamiyat</th><td>${item.islamiyat}</td></tr>
+                <tr><th>SST</th><td>${item.sst}</td></tr>
+                <tr><th>Science</th><td>${item.science}</td></tr>
+              </tbody>
+            </table>
+
+            <div class="slip-footer-note">
+              <strong>Note for Parents:</strong> <span>${item.generalNote}</span>
+            </div>
+
+            <div class="slip-signatures">
+              <div>Class Teacher: ____________</div>
+              <div>Coordinator: ____________</div>
+              <div>Parent's Sign: ____________</div>
+            </div>
+          </div>
+        `;
+        slipsContainer.innerHTML += slipHtml;
+      });
+
+      window.print();
+    }
+  </script>
+</body>
+</html>
