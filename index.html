@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pine Hills School - Management System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <style>
+    :root {
+      --primary-color: #1e3a8a;
+      --primary-accent: #2563eb;
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --border-color: #cbd5e1;
+      --success-color: #10b981;
+    }
+    .chip-btn {
+      transition: all 0.15s ease-in-out;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      text-align: center;
+      width: 100%;
+    }
+    .chip-btn.selected {
+      background-color: #1e3a8a !important;
+      color: #ffffff !important;
+      border-color: #1e3a8a !important;
+      box-shadow: 0 4px 8px rgba(30, 58, 138, 0.3);
+      font-weight: 700;
+    }
+    .slips-container { display: none; }
+    .slip {
+      border: 2px solid var(--primary-color);
+      padding: 20px;
+      border-radius: 8px;
+      background: #fff;
+      margin-bottom: 20px;
+      page-break-after: always;
+    }
+    .slip-header { text-align: center; margin-bottom: 12px; border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; }
+    .slip-header h1 { font-size: 20px; color: var(--primary-color); }
+    .slip-info { display: flex; justify-content: space-between; background: #eff6ff; padding: 6px 12px; font-weight: bold; font-size: 12px; margin-bottom: 12px; }
+    .diary-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    .diary-table th, .diary-table td { border: 1px solid #cbd5e1; padding: 6px 10px; font-size: 12px; }
+    .diary-table th { background-color: #f1f5f9; color: var(--primary-color); width: 30%; text-align: left; }
+    .slip-footer-note { background: #fef3c7; border: 1px solid #fde68a; padding: 8px; font-size: 11px; margin-bottom: 12px; }
+    .slip-signatures { display: flex; justify-content: space-between; margin-top: 20px; font-size: 11px; font-weight: bold; border-top: 1px solid var(--border-color); padding-top: 8px; }
+    @media print {
+      body { background: white !important; padding: 0 !important; }
+      nav, .portal-container, #loginModal { display: none !important; }
+      .slips-container { display: block !important; }
+      .slip { border: 2px solid #000; margin-bottom: 0; }
+      .slip-header h1 { color: #000; }
+      .slip-info { background: #f8fafc; border: 1px solid #ccc; }
+      .diary-table th { background: #eee; color: #000; }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 font-sans min-h-screen text-slate-900" onclick="unlockAudioOnInteraction()">
+
+    <audio id="notifSound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <nav class="bg-blue-900 text-white p-3 shadow-md flex justify-between items-center sticky top-0 z-40">
+        <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-xl font-bold uppercase tracking-wider">Pine Hills School</h1>
+            <span class="hidden sm:inline-block text-xs bg-blue-800 px-2 py-0.5 rounded text-blue-200">Management System</span>
+        </div>
+        <div class="flex space-x-1 sm:space-x-2">
+            <button onclick="switchTab('reporter')" id="tabBtn-reporter" class="bg-blue-700 hover:bg-blue-800 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm">📝 Live Report</button>
+            <button onclick="switchTab('diary')" id="tabBtn-diary" class="bg-blue-800 hover:bg-blue-900 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm">📖 Diary Generator</button>
+            <button onclick="switchTab('madam')" id="tabBtn-madam" class="bg-blue-800 hover:bg-blue-900 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm">
+                👑 Madam View
+                <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full animate-pulse">New</span>
+            </button>
+        </div>
+    </nav>
+    <div class="portal-container max-w-7xl mx-auto p-2 sm:p-4">
+
+        <!-- TAB 1: LIVE REPORTING -->
+        <section id="reporterTab" class="space-y-3">
+            <form id="reportForm" onsubmit="submitReport(event)" class="bg-white rounded-xl shadow-sm p-3 sm:p-4 border border-slate-200 space-y-3">
+                <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-blue-900">Live Period Progress Report</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Quickly send live teaching progress directly to Madam's dashboard.</p>
+                    </div>
+                </div>
+
+                <input type="hidden" id="teacherName" required>
+                <input type="hidden" id="className" required>
+                <input type="hidden" id="subjectName" required>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
+                        <div class="flex items-center gap-1.5 mb-2">
+                            <span class="bg-blue-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Step 1</span>
+                            <label class="text-xs font-bold text-slate-800">Select Teacher</label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1.5">
+                            <button type="button" onclick="selectChip('teacher', 'Miss Bushra', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Miss Bushra</button>
+                            <button type="button" onclick="selectChip('teacher', 'Miss Mahnoor', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Miss Mahnoor</button>
+                            <button type="button" onclick="selectChip('teacher', 'Sir Ali', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Sir Ali</button>
+                            <button type="button" onclick="selectChip('teacher', 'Sir Asim', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Sir Asim</button>
+                            <button type="button" onclick="selectChip('teacher', 'Miss Nimra', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Miss Nimra</button>
+                            <button type="button" onclick="selectChip('teacher', 'Other', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Other</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
+                        <div class="flex items-center gap-1.5 mb-2">
+                            <span class="bg-blue-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Step 2</span>
+                            <label class="text-xs font-bold text-slate-800">Class & Section</label>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1.5">
+                            <button type="button" onclick="selectChip('class', 'Playgroup', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Playgroup</button>
+                            <button type="button" onclick="selectChip('class', 'Nursery', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Nursery</button>
+                            <button type="button" onclick="selectChip('class', 'Prep', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Prep</button>
+                            <button type="button" onclick="selectChip('class', 'Class 1', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Class 1</button>
+                            <button type="button" onclick="selectChip('class', 'Class 2', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Class 2</button>
+                            <button type="button" onclick="selectChip('class', 'Class 3', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Class 3</button>
+                            <button type="button" onclick="selectChip('class', 'Class 4', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Class 4</button>
+                            <button type="button" onclick="selectChip('class', 'Class 5', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Class 5</button>
+                            <button type="button" onclick="selectChip('class', 'Class 6-10', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Senior</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
+                        <div class="flex items-center gap-1.5 mb-2">
+                            <span class="bg-blue-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Step 3</span>
+                            <label class="text-xs font-bold text-slate-800">Subject / Period</label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1.5">
+                            <button type="button" onclick="selectChip('subject', 'English', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">English</button>
+                            <button type="button" onclick="selectChip('subject', 'Urdu', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Urdu</button>
+                            <button type="button" onclick="selectChip('subject', 'Math', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Math</button>
+                            <button type="button" onclick="selectChip('subject', 'Islamiyat', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Islamiyat</button>
+                            <button type="button" onclick="selectChip('subject', 'Science', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">Science</button>
+                            <button type="button" onclick="selectChip('subject', 'S.ST', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-blue-500">S.ST</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 rounded-lg p-3 border border-slate-200 space-y-2">
+                    <div class="flex items-center gap-1.5">
+                        <span class="bg-blue-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Step 4</span>
+                        <label class="text-xs font-bold text-slate-800">Lesson / Work Done in Class</label>
+                    </div>
+                    <textarea id="workDone" rows="2" required placeholder="Details of what was taught today..." class="w-full p-2.5 text-xs sm:text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                    
+                    <button type="submit" id="submitBtn" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 text-sm sm:text-base rounded-lg shadow-md transition transform active:scale-95">
+                        Submit Live Report to Madam
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- TAB 2: DIARY GENERATOR -->
+        <section id="diaryTab" class="hidden space-y-3">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200">
+                    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
+                        <h2 class="text-base font-bold text-blue-900">Daily Class Diary Entry</h2>
+                        <span id="liveDateDisplay" class="text-xs font-semibold bg-blue-50 text-blue-800 px-2.5 py-1 rounded-full"></span>
+                    </div>
+
+                    <form id="entryForm" onsubmit="saveDiaryEntry(event)">
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Select Class</label>
+                                <select id="diaryClass" onchange="loadClassDiary(this.value)" class="w-full p-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600" required>
+                                    <option value="">-- Choose Class --</option>
+                                    <option value="Playgroup">Playgroup</option>
+                                    <option value="Nursery">Nursery</option>
+                                    <option value="Prep">Prep</option>
+                                    <option value="Class 1">Class 1</option>
+                                    <option value="Class 2">Class 2</option>
+                                    <option value="Class 3">Class 3</option>
+                                    <option value="Class 4">Class 4</option>
+                                    <option value="Class 5">Class 5</option>
+                                    <option value="Class 6">Class 6</option>
+                                    <option value="Class 7">Class 7</option>
+                                    <option value="Class 8">Class 8</option>
+                                    <option value="Class 9">Class 9</option>
+                                    <option value="Class 10">Class 10</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Date</label>
+                                <input type="date" id="diaryDate" class="w-full p-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600" required>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-700">English</label>
+                                <textarea id="d_english" placeholder="English homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-700">Urdu</label>
+                                <textarea id="d_urdu" placeholder="Urdu homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-700">Math</label>
+                                <textarea id="d_math" placeholder="Math homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-700">Islamiyat</label>
+                                <textarea id="d_islamiyat" placeholder="Islamiyat homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-700">SST</label>
+                                <textarea id="d_sst" placeholder="SST homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-700">Science</label>
+                                <textarea id="d_science" placeholder="Science homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">General Note / Announcements</label>
+                            <textarea id="d_generalNote" placeholder="e.g. Test on Monday..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 text-xs sm:text-sm rounded-lg shadow transition">
+                            💾 Save / Update Class Diary
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
+                            <h2 class="text-base font-bold text-blue-900">Saved Class Cards</h2>
+                            <span id="classCountBadge" class="text-xs font-semibold bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded-full">0 Saved</span>
+                        </div>
+
+                        <div class="flex gap-2 mb-3">
+                            <button onclick="generateAndPrintAll()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm flex justify-center items-center gap-1">
+                                🖨️ Print / Save All Diaries (PDF)
+                            </button>
+                            <button onclick="clearAllData()" class="bg-slate-500 hover:bg-slate-600 text-white font-bold py-2 px-3 rounded-lg text-xs transition">
+                                Reset All
+                            </button>
+                        </div>
+
+                        <div id="summaryContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-96 overflow-y-auto pr-1">
+                            <p class="text-xs text-slate-400 col-span-2 py-8 text-center">No class diaries saved yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- TAB 3: MADAM VIEW -->
+        <section id="madamTab" class="hidden bg-white rounded-xl shadow-md p-4 border border-slate-200">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-2 border-b">
+                <div class="flex items-center gap-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-800">Madam Dashboard</h2>
+                    <button onclick="logoutMadam()" class="text-xs bg-red-100 hover:bg-red-200 text-red-600 px-2 py-1 rounded font-semibold transition" title="Logout Madam">Logout 🔒</button>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                    <button onclick="enableSoundAndPermission()" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1 shadow-sm">
+                        🔔 Enable Sound & Alerts
+                    </button>
+                    <span id="reportCount" class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap">0 Reports</span>
+                </div>
+            </div>
+
+            <div id="toastNotif" class="hidden mb-4 bg-emerald-100 border-l-4 border-emerald-500 text-emerald-800 p-3 rounded shadow-sm text-xs sm:text-sm" role="alert">
+                <p class="font-bold">Naya Notification!</p>
+                <p id="toastMsg">Aik naye period ki report submit hui hai.</p>
+            </div>
+
+            <div id="reportsList" class="space-y-3">
+                <p class="text-slate-500 text-center py-6 text-sm">Loading reports...</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 text-center space-y-3">
+            <h3 class="text-lg font-bold text-slate-800">Madam Login</h3>
+            <p class="text-xs text-slate-500">Madam View access karne ke liye Login karein</p>
+            <div class="space-y-2">
+                <input type="text" id="loginUser" placeholder="Username" class="w-full p-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600">
+                <input type="password" id="loginPass" placeholder="Password" class="w-full p-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeLoginModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-1.5 text-xs sm:text-sm rounded-lg">Cancel</button>
+                <button onclick="verifyMadamLogin()" class="flex-1 bg-blue-900 hover:bg-blue-800 text-white font-semibold py-1.5 text-xs sm:text-sm rounded-lg shadow">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINT SLIPS CONTAINER -->
+    <div id="slipsContainer" class="slips-container"></div>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBD_WQ8tDZfd_7ZElCFWfH2soKjn3FIIZI",
+            authDomain: "syllabus-c7fd7.firebaseapp.com",
+            projectId: "syllabus-c7fd7",
+            storageBucket: "syllabus-c7fd7.firebasestorage.app",
+            messagingSenderId: "337710632873",
+            appId: "1:337710632873:web:f9abae923620c9e0a3feb8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let initialLoadDone = false;
+        let isMadamLoggedIn = false;
+        let audioCtx = null;
+        let diaryStore = {};
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        document.getElementById('diaryDate').value = todayStr;
+        document.getElementById('liveDateDisplay').innerText = `Date: ${todayStr}`;
+
+        function switchTab(tab) {
+            document.getElementById('reporterTab').classList.add('hidden');
+            document.getElementById('diaryTab').classList.add('hidden');
+            document.getElementById('madamTab').classList.add('hidden');
+
+            document.getElementById('tabBtn-reporter').className = "bg-blue-800 hover:bg-blue-900 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm";
+            document.getElementById('tabBtn-diary').className = "bg-blue-800 hover:bg-blue-900 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm";
+            document.getElementById('tabBtn-madam').className = "bg-blue-800 hover:bg-blue-900 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm";
+
+            if (tab === 'reporter') {
+                document.getElementById('reporterTab').classList.remove('hidden');
+                document.getElementById('tabBtn-reporter').className = "bg-blue-700 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm ring-2 ring-white";
+            } else if (tab === 'diary') {
+                document.getElementById('diaryTab').classList.remove('hidden');
+                document.getElementById('tabBtn-diary').className = "bg-blue-700 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm ring-2 ring-white";
+            } else if (tab === 'madam') {
+                if (isMadamLoggedIn) {
+                    document.getElementById('madamTab').classList.remove('hidden');
+                    document.getElementById('tabBtn-madam').className = "bg-blue-700 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm ring-2 ring-white";
+                    document.getElementById('notifBadge').classList.add('hidden');
+                } else {
+                    document.getElementById('loginModal').classList.remove('hidden');
+                }
+            }
+        }
+
+        function selectChip(category, value, element) {
+            const chips = document.querySelectorAll(`.${category}-chip`);
+            chips.forEach(chip => chip.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById(`${category}Name`).value = value;
+        }
+
+        function submitReport(e) {
+            e.preventDefault();
+            const teacher = document.getElementById('teacherName').value;
+            const className = document.getElementById('className').value;
+            const subject = document.getElementById('subjectName').value;
+
+            if(!teacher || !className || !subject) {
+                alert("Please Teacher, Class aur Subject zaroor select karein!");
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Submitting...";
+
+            const newReport = {
+                teacher: teacher,
+                class: className,
+                subject: subject,
+                work: document.getElementById('workDone').value,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            db.collection('reports').add(newReport).then(() => {
+                alert("Report Madam tak bhej di gayi hai!");
+                document.getElementById('reportForm').reset();
+                document.querySelectorAll('.chip-btn').forEach(chip => chip.classList.remove('selected'));
+                document.getElementById('teacherName').value = '';
+                document.getElementById('className').value = '';
+                document.getElementById('subjectName').value = '';
+
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Submit Live Report to Madam";
+            }).catch(error => {
+                alert("Error: " + error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Submit Live Report to Madam";
+            });
+        }
+
+        function loadClassDiary(cls) {
+            if (diaryStore[cls]) {
+                const data = diaryStore[cls];
+                document.getElementById('d_english').value = data.english !== 'No homework' ? data.english : '';
+                document.getElementById('d_urdu').value = data.urdu !== 'No homework' ? data.urdu : '';
+                document.getElementById('d_math').value = data.math !== 'No homework' ? data.math : '';
+                document.getElementById('d_islamiyat').value = data.islamiyat !== 'No homework' ? data.islamiyat : '';
+                document.getElementById('d_sst').value = data.sst !== 'No homework' ? data.sst : '';
+                document.getElementById('d_science').value = data.science !== 'No homework' ? data.science : '';
+                document.getElementById('d_generalNote').value = data.generalNote !== 'Kindly check and sign the diary daily.' ? data.generalNote : '';
+            } else {
+                clearSubjectFields();
+            }
+        }
+
+        function clearSubjectFields() {
+            document.getElementById('d_english').value = '';
+            document.getElementById('d_urdu').value = '';
+            document.getElementById('d_math').value = '';
+            document.getElementById('d_islamiyat').value = '';
+            document.getElementById('d_sst').value = '';
+            document.getElementById('d_science').value = '';
+            document.getElementById('d_generalNote').value = '';
+        }
+
+        function saveDiaryEntry(e) {
+            e.preventDefault();
+            const className = document.getElementById('diaryClass').value;
+            const date = document.getElementById('diaryDate').value;
+
+            if (!className) {
+                alert('Please select a class first!');
+                return;
+            }
+
+            diaryStore[className] = {
+                date: date,
+                english: document.getElementById('d_english').value.trim() || 'No homework',
+                urdu: document.getElementById('d_urdu').value.trim() || 'No homework',
+                math: document.getElementById('d_math').value.trim() || 'No homework',
+                islamiyat: document.getElementById('d_islamiyat').value.trim() || 'No homework',
+                sst: document.getElementById('d_sst').value.trim() || 'No homework',
+                science: document.getElementById('d_science').value.trim() || 'No homework',
+                generalNote: document.getElementById('d_generalNote').value.trim() || 'Kindly check and sign the diary daily.'
+            };
+
+            renderSummary();
+        }
+
+        function renderSummary() {
+            const container = document.getElementById('summaryContainer');
+            const countBadge = document.getElementById('classCountBadge');
+            container.innerHTML = '';
+
+            const keys = Object.keys(diaryStore);
+            countBadge.innerText = `${keys.length} Saved`;
+
+            if (keys.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 col-span-2 py-8 text-center">No class diaries saved yet.</p>';
+                return;
+            }
+
+            keys.forEach(cls => {
+                const item = diaryStore[cls];
+                const cardHtml = `
+                    <div class="border border-slate-200 rounded-lg p-2.5 bg-slate-50 text-xs">
+                        <div class="flex justify-between items-center pb-1 mb-1 border-b border-slate-200">
+                            <span class="font-bold text-blue-900">${cls}</span>
+                            <button onclick="deleteClass('${cls}')" class="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded">Delete</button>
+                        </div>
+                        <div class="space-y-0.5 text-[11px]">
+                            <div><strong>Eng:</strong> ${item.english}</div>
+                            <div><strong>Urdu:</strong> ${item.urdu}</div>
+                            <div><strong>Math:</strong> ${item.math}</div>
+                            <div><strong>Isl:</strong> ${item.islamiyat}</div>
+                            <div><strong>SST:</strong> ${item.sst}</div>
+                            <div><strong>Sci:</strong> ${item.science}</div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        function deleteClass(cls) {
+            delete diaryStore[cls];
+            renderSummary();
+        }
+
+        function clearAllData() {
+            if (confirm('Reset all saved class diaries?')) {
+                diaryStore = {};
+                clearSubjectFields();
+                document.getElementById('diaryClass').value = '';
+                renderSummary();
+            }
+        }
+
+        function generateAndPrintAll() {
+            const keys = Object.keys(diaryStore);
+            if (keys.length === 0) {
+                alert('Please add diary entries for at least one class before printing!');
+                return;
+            }
+
+            const slipsContainer = document.getElementById('slipsContainer');
+            slipsContainer.innerHTML = '';
+
+            keys.forEach(cls => {
+                const item = diaryStore[cls];
+                const slipHtml = `
+                    <div class="slip">
+                        <div class="slip-header">
+                            <h1>PINE HILLS SCHOOL</h1>
+                            <p>Daily Class Diary Slip</p>
+                        </div>
+                        <div class="slip-info">
+                            <div>Class: <span>${cls}</span></div>
+                            <div>Date: <span>${item.date}</span></div>
+                        </div>
+                        <table class="diary-table">
+                            <thead>
+                                <tr><th>Subject</th><th>Homework / Classwork</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><th>English</th><td>${item.english}</td></tr>
+                                <tr><th>Urdu</th><td>${item.urdu}</td></tr>
+                                <tr><th>Math</th><td>${item.math}</td></tr>
+                                <tr><th>Islamiyat</th><td>${item.islamiyat}</td></tr>
+                                <tr><th>SST</th><td>${item.sst}</td></tr>
+                                <tr><th>Science</th><td>${item.science}</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="slip-footer-note">
+                            <strong>Note for Parents:</strong> <span>${item.generalNote}</span>
+                        </div>
+                        <div class="slip-signatures">
+                            <div>Class Teacher: ____________</div>
+                            <div>Coordinator: ____________</div>
+                            <div>Parent's Sign: ____________</div>
+                        </div>
+                    </div>
+                `;
+                slipsContainer.innerHTML += slipHtml;
+            });
+
+            window.print();
+        }
+
+        function unlockAudioOnInteraction() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playLoudLongSmoothBell() {
+            try {
+                unlockAudioOnInteraction();
+                if (!audioCtx) return;
+
+                const sequence = [
+                    { f: 523.25, delay: 0.0,  len: 0.6 },
+                    { f: 659.25, delay: 0.25, len: 0.6 },
+                    { f: 783.99, delay: 0.50, len: 0.6 },
+                    { f: 1046.50, delay: 0.75, len: 0.8 },
+                    { f: 1318.51, delay: 1.05, len: 2.0 }
+                ];
+
+                sequence.forEach(item => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = item.f;
+                    const start = audioCtx.currentTime + item.delay;
+                    gain.gain.setValueAtTime(0, start);
+                    gain.gain.linearRampToValueAtTime(0.5, start + 0.04);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, start + item.len);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(start);
+                    osc.stop(start + item.len);
+                });
+            } catch(e) {
+                const audio = document.getElementById('notifSound');
+                if(audio) { audio.currentTime = 0; audio.play().catch(err => console.log(err)); }
+            }
+        }
+
+        function enableSoundAndPermission() {
+            unlockAudioOnInteraction();
+            playLoudLongSmoothBell();
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") showToast("Background & Sound Alerts Active!");
+                });
+            }
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+        }
+
+        function verifyMadamLogin() {
+            const u = document.getElementById('loginUser').value.trim();
+            const p = document.getElementById('loginPass').value.trim();
+
+            if (u === "a" && p === "1") {
+                isMadamLoggedIn = true;
+                closeLoginModal();
+                switchTab('madam');
+            } else {
+                alert("❌ Wrong Username or Password!");
+            }
+        }
+
+        function logoutMadam() {
+            isMadamLoggedIn = false;
+            switchTab('reporter');
+            alert("Madam Logout ho chuki hain!");
+        }
+
+        function deleteReport(docId) {
+            if (confirm("Delete this report from database?")) {
+                db.collection('reports').doc(docId).delete().then(() => {
+                    showToast("Report successfully deleted!");
+                });
+            }
+        }
+
+        db.collection('reports').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
+            const reportsList = document.getElementById('reportsList');
+            reportsList.innerHTML = '';
+
+            if (snapshot.empty) {
+                reportsList.innerHTML = '<p class="text-slate-500 text-center py-6 text-sm">Abhi tak koi report submit nahi hui.</p>';
+                document.getElementById('reportCount').innerText = '0 Reports';
+                return;
+            }
+
+            document.getElementById('reportCount').innerText = `${snapshot.size} Reports Total`;
+            let latestDoc = null;
+
+            snapshot.forEach((doc, index) => {
+                const report = doc.data();
+                const docId = doc.id;
+                if (index === 0) latestDoc = report;
+
+                const card = `
+                    <div class="bg-slate-50 border-l-4 border-blue-900 p-3 rounded-r-lg shadow-sm relative">
+                        <div class="flex justify-between items-start mb-1 gap-2">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm sm:text-base">${report.teacher || 'Unknown Teacher'}</h3>
+                                <p class="text-xs font-semibold text-blue-900">${report.class} - ${report.subject}</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] sm:text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded whitespace-nowrap">${report.timestamp || ''}</span>
+                                <button onclick="deleteReport('${docId}')" title="Delete Report" class="bg-red-100 hover:bg-red-200 text-red-600 p-1.5 rounded-lg text-xs transition font-semibold">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </div>
+                        <p class="text-slate-700 text-xs sm:text-sm mt-1 bg-white p-2 rounded border border-slate-200 whitespace-pre-line">${report.work}</p>
+                    </div>
+                `;
+                reportsList.innerHTML += card;
+            });
+
+            if (initialLoadDone && snapshot.docChanges().some(change => change.type === "added")) {
+                document.getElementById('notifBadge').classList.remove('hidden');
+                playLoudLongSmoothBell();
+                const msg = `${latestDoc && latestDoc.teacher ? latestDoc.teacher : 'Teacher'} ne ${latestDoc ? latestDoc.class : 'class'} ki report submit ki hai.`;
+                showToast(msg);
+            }
+
+            initialLoadDone = true;
+        });
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotif');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 6000);
+        }
+    </script>
+</body>
+</html>
+
+
+
