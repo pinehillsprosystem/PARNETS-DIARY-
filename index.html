@@ -7,53 +7,53 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <!-- html2pdf Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- html2canvas Library for Image Download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- Handwritten Font for Signature -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary-color: #0f172a;
-      --accent-color: #1e3a8a;
-      --bg-color: #f8fafc;
+      --primary-color: #020617;
+      --accent-color: #2563eb;
+      --bg-color: #0f172a;
     }
     .chip-btn {
-      transition: all 0.15s ease-in-out;
+      transition: all 0.2s ease-in-out;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
       text-align: center;
       width: 100%;
     }
-    .chip-btn.selected {
-      background-color: #0f172a !important;
-      color: #ffffff !important;
-      border-color: #0f172a !important;
-      box-shadow: 0 4px 8px rgba(15, 23, 42, 0.3);
-      font-weight: 700;
+    .chip-btn:active {
+      transform: scale(0.98);
     }
     
-    /* PROFESSIONAL EXECUTIVE DIARY SLIP DESIGN FOR PDF & PRINT ONLY */
+    /* BULLETPROOF EXECUTIVE DIARY SLIP DESIGN FOR PERFECT IMAGE RENDER */
     .slips-container { 
       display: none; 
       background: #ffffff;
       padding: 0;
+      width: 800px;
+      margin: 0 auto;
+      box-sizing: border-box;
     }
     .slip {
       background: #ffffff;
       border: 2px solid #0f172a;
       border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 25px;
+      padding: 24px;
+      margin-bottom: 20px;
       page-break-after: always;
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       color: #0f172a;
+      box-sizing: border-box;
     }
     .slip-brand {
-      background: #0f172a;
+      background-color: #0f172a;
       color: #ffffff;
       padding: 14px 20px;
       border-radius: 4px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      margin-bottom: 0;
     }
     .slip-brand h1 {
       font-size: 18px;
@@ -61,6 +61,7 @@
       letter-spacing: 1.5px;
       margin: 0;
       text-transform: uppercase;
+      color: #ffffff;
     }
     .slip-brand-subtitle {
       font-size: 10px;
@@ -68,28 +69,28 @@
       letter-spacing: 1px;
       text-transform: uppercase;
       font-weight: 600;
-      margin-top: 2px;
+      margin-top: 3px;
     }
-    .slip-meta-strip {
-      background: #f1f5f9;
+    .slip-meta-table {
+      width: 100%;
+      background-color: #f1f5f9;
       border: 1px solid #cbd5e1;
       border-top: none;
-      padding: 8px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: #334155;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
-    .slip-badge {
-      background: #1e3a8a;
-      color: #ffffff;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 11px;
+    .slip-meta-table td {
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #1e293b;
+      border: none;
+    }
+    .class-text-highlight {
+      color: #1e3a8a;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: underline;
+      padding-left: 4px;
     }
     .diary-table {
       width: 100%;
@@ -103,7 +104,7 @@
       text-transform: uppercase;
       font-size: 11px;
       letter-spacing: 0.5px;
-      padding: 8px 10px;
+      padding: 9px 10px;
       text-align: left;
       border: 1px solid #1e293b;
     }
@@ -123,7 +124,7 @@
       background-color: #ffffff;
     }
     .slip-footer-note {
-      background: #fffbebf5;
+      background-color: #fffbebf5;
       border: 1px solid #fde68a;
       border-left: 4px solid #f59e0b;
       border-radius: 4px;
@@ -131,152 +132,188 @@
       font-size: 11px;
       color: #92400e;
       margin-top: 12px;
-      margin-bottom: 25px;
+      margin-bottom: 24px;
     }
-    .slip-signatures {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 25px;
-      padding-top: 5px;
+    .slip-signatures-table {
+      width: 100%;
+      margin-top: 20px;
       font-size: 11px;
       font-weight: 700;
       color: #475569;
+      border-collapse: collapse;
+    }
+    .sig-td {
+      width: 33.33%;
+      text-align: center;
+      vertical-align: bottom;
+      padding: 0 10px;
+      border: none;
+    }
+    .signature-art {
+      font-family: 'Great Vibes', cursive;
+      font-size: 26px;
+      color: #1e3a8a;
+      line-height: 1;
+      margin-bottom: 4px;
+      font-weight: bold;
     }
     .sig-line {
       border-top: 1.5px dashed #64748b;
-      padding-top: 5px;
-      width: 28%;
+      padding-top: 6px;
+      width: 100%;
       text-align: center;
     }
 
     @media print {
-      body { background: white !important; padding: 0 !important; }
+      body { background: white !important; padding: 0 !important; color: black !important; }
       nav, .portal-container, #loginModal { display: none !important; }
-      .slips-container { display: block !important; background: transparent; padding: 0; }
+      .slips-container { display: block !important; background: transparent; padding: 0; width: 100% !important; }
       .slip { box-shadow: none; margin-bottom: 0; border: 1.5px solid #0f172a; }
     }
   </style>
 </head>
-<body class="bg-slate-100 font-sans min-h-screen text-slate-900" onclick="unlockAudioOnInteraction()">
+<body class="bg-slate-950 font-sans min-h-screen text-slate-100" onclick="unlockAudioOnInteraction()">
 
     <audio id="notifSound" preload="auto">
         <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
     </audio>
 
-    <nav class="bg-slate-900 text-white p-3 shadow-md flex justify-between items-center sticky top-0 z-40">
+    <nav class="bg-black text-white p-3 shadow-lg border-b border-blue-900/50 flex justify-between items-center sticky top-0 z-40">
         <div class="flex items-center gap-2">
             <h1 class="text-base sm:text-xl font-bold uppercase tracking-wider text-blue-400">Pine Hills School</h1>
-            <span class="hidden sm:inline-block text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-300">Management System</span>
+            <span class="hidden sm:inline-block text-xs bg-slate-900 border border-blue-800 px-2 py-0.5 rounded text-blue-200">Management System</span>
         </div>
         <div class="flex space-x-1 sm:space-x-2">
-            <button onclick="switchTab('reporter')" id="tabBtn-reporter" class="bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm">📝 Live Report</button>
-            <button onclick="switchTab('diary')" id="tabBtn-diary" class="bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm">📖 Diary Generator</button>
-            <button onclick="switchTab('madam')" id="tabBtn-madam" class="bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm">
+            <button onclick="switchTab('reporter')" id="tabBtn-reporter" class="bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm border border-blue-900/40">📝 Live Report</button>
+            <button onclick="switchTab('diary')" id="tabBtn-diary" class="bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm border border-blue-900/40">📖 Diary Generator</button>
+            <button onclick="switchTab('madam')" id="tabBtn-madam" class="bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm border border-blue-900/40">
                 👑 Madam View
-                <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full animate-pulse">New</span>
+                <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-full animate-pulse">New</span>
             </button>
         </div>
     </nav>
 
-    <div class="portal-container max-w-7xl mx-auto p-2 sm:p-4">
+    <div class="portal-container max-w-4xl mx-auto p-2 sm:p-4">
 
-        <!-- TAB 1: LIVE REPORTING -->
+        <!-- TAB 1: LIVE REPORTING (FULL SCREEN WIZARD FLOW) -->
         <section id="reporterTab" class="space-y-3">
-            <form id="reportForm" onsubmit="submitReport(event)" class="bg-white rounded-xl shadow-sm p-3 sm:p-4 border border-slate-200 space-y-3">
-                <div class="flex justify-between items-center pb-2 border-b border-slate-100">
-                    <div>
-                        <h2 class="text-base sm:text-lg font-bold text-slate-900">Live Period Progress Report</h2>
-                        <p class="text-[11px] sm:text-xs text-slate-500">Quickly send live teaching progress directly to Madam's dashboard.</p>
-                    </div>
-                </div>
-
+            <form id="reportForm" onsubmit="submitReport(event)" class="bg-slate-900 rounded-2xl shadow-2xl p-4 sm:p-6 border border-blue-900/50">
+                
                 <input type="hidden" id="teacherName" required>
                 <input type="hidden" id="className" required>
                 <input type="hidden" id="subjectName" required>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div class="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
-                        <div class="flex items-center gap-1.5 mb-2">
-                            <span class="bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Step 1</span>
-                            <label class="text-xs font-bold text-slate-800">Select Teacher</label>
-                        </div>
-                        <div class="grid grid-cols-2 gap-1.5">
-                            <button type="button" onclick="selectChip('teacher', 'Miss Bushra', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Miss Bushra</button>
-                            <button type="button" onclick="selectChip('teacher', 'Miss Mahnoor', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Miss Mahnoor</button>
-                            <button type="button" onclick="selectChip('teacher', 'Miss Hiba', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Miss Hiba</button>
-                            <button type="button" onclick="selectChip('teacher', 'Miss Areeba', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Miss Areeba</button>
-                            <button type="button" onclick="selectChip('teacher', 'Miss Nayab', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Miss Nayab</button>
-                            <button type="button" onclick="selectChip('teacher', 'Sir Asim', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Sir Asim</button>
-                            <button type="button" onclick="selectChip('teacher', 'Other', this)" class="chip-btn teacher-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800 col-span-2">Other</button>
-                        </div>
+                <!-- TOP BAR WITH SELECTED SUMMARY -->
+                <div class="flex justify-between items-center pb-3 mb-4 border-b border-slate-800">
+                    <div>
+                        <h2 class="text-base sm:text-xl font-extrabold text-white">Live Progress Report</h2>
+                        <p class="text-xs text-slate-400">Aap asaani se step-by-step report submit karein.</p>
                     </div>
+                    <button type="button" onclick="goToStep(1)" class="text-xs bg-slate-800 hover:bg-slate-700 text-blue-300 px-3 py-1.5 rounded-lg font-semibold border border-blue-900/60 transition">Start Over 🔄</button>
+                </div>
 
-                    <div class="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
-                        <div class="flex items-center gap-1.5 mb-2">
-                            <span class="bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Step 2</span>
-                            <label class="text-xs font-bold text-slate-800">Class & Section</label>
-                        </div>
-                        <div class="grid grid-cols-3 gap-1.5">
-                            <button type="button" onclick="selectChip('class', 'Playgroup', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Playgroup</button>
-                            <button type="button" onclick="selectChip('class', 'Nursery', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Nursery</button>
-                            <button type="button" onclick="selectChip('class', 'Prep', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Prep</button>
-                            <button type="button" onclick="selectChip('class', 'Class 1', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Class 1</button>
-                            <button type="button" onclick="selectChip('class', 'Class 2', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Class 2</button>
-                            <button type="button" onclick="selectChip('class', 'Class 3', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Class 3</button>
-                            <button type="button" onclick="selectChip('class', 'Class 4', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Class 4</button>
-                            <button type="button" onclick="selectChip('class', 'Class 5', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Class 5</button>
-                            <button type="button" onclick="selectChip('class', 'Class 6', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Class 6</button>
-                            <button type="button" onclick="selectChip('class', 'Class 7', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Class 7</button>
-                            <button type="button" onclick="selectChip('class', 'Class 8', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Class 8</button>
-                            <button type="button" onclick="selectChip('class', 'Class 9', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Class 9</button>
-                            <button type="button" onclick="selectChip('class', 'Class 10', this)" class="chip-btn class-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800 col-span-2">Class 10</button>
-                        </div>
+                <!-- LIVE BREADCRUMB BADGES -->
+                <div id="selectionSummary" class="flex flex-wrap gap-2 mb-4 hidden">
+                    <span id="badgeTeacher" class="bg-blue-950 text-blue-200 border border-blue-600 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1"></span>
+                    <span id="badgeClass" class="bg-blue-950 text-blue-200 border border-blue-600 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1"></span>
+                    <span id="badgeSubject" class="bg-blue-950 text-blue-200 border border-blue-600 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1"></span>
+                </div>
+
+                <!-- STEP 1: TEACHER SELECTION -->
+                <div id="wizardStep1" class="space-y-4">
+                    <div class="text-center py-2">
+                        <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Step 1 of 4</span>
+                        <h3 class="text-lg sm:text-2xl font-bold text-white mt-2">Aap Kon Hain? (Select Teacher)</h3>
                     </div>
-
-                    <div class="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
-                        <div class="flex items-center gap-1.5 mb-2">
-                            <span class="bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Step 3</span>
-                            <label class="text-xs font-bold text-slate-800">Subject / Period</label>
-                        </div>
-                        <div class="grid grid-cols-2 gap-1.5">
-                            <button type="button" onclick="selectChip('subject', 'English', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">English</button>
-                            <button type="button" onclick="selectChip('subject', 'Urdu', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Urdu</button>
-                            <button type="button" onclick="selectChip('subject', 'Math', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Math</button>
-                            <button type="button" onclick="selectChip('subject', 'Islamiyat', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Islamiyat</button>
-                            <button type="button" onclick="selectChip('subject', 'Science', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">Science</button>
-                            <button type="button" onclick="selectChip('subject', 'S.ST', this)" class="chip-btn subject-chip border border-slate-300 bg-white text-slate-700 font-medium py-1.5 px-1 rounded-md text-xs hover:border-slate-800">S.ST</button>
-                        </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                        <button type="button" onclick="chooseTeacher('Miss Bushra')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">Miss Bushra</button>
+                        <button type="button" onclick="chooseTeacher('Miss Mahnoor')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">Miss Mahnoor</button>
+                        <button type="button" onclick="chooseTeacher('Miss Hiba')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">Miss Hiba</button>
+                        <button type="button" onclick="chooseTeacher('Miss Areeba')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">Miss Areeba</button>
+                        <button type="button" onclick="chooseTeacher('Miss Nayab')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">Miss Nayab</button>
+                        <button type="button" onclick="chooseTeacher('Sir Asim')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">Sir Asim</button>
+                        <button type="button" onclick="chooseTeacher('Other')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm sm:col-span-2 md:col-span-3">Other Teacher</button>
                     </div>
                 </div>
 
-                <div class="bg-slate-50 rounded-lg p-3 border border-slate-200 space-y-2">
-                    <div class="flex items-center gap-1.5">
-                        <span class="bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Step 4</span>
-                        <label class="text-xs font-bold text-slate-800">Lesson / Work Done in Class</label>
+                <!-- STEP 2: CLASS SELECTION -->
+                <div id="wizardStep2" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <button type="button" onclick="goToStep(1)" class="text-xs bg-slate-800 text-blue-300 border border-blue-900 px-3 py-1 rounded-lg font-bold hover:bg-slate-700">← Back to Step 1</button>
+                        <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Step 2 of 4</span>
                     </div>
-                    <textarea id="workDone" rows="2" required placeholder="Details of what was taught today..." class="w-full p-2.5 text-xs sm:text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-800 focus:outline-none"></textarea>
-                    
-                    <button type="submit" id="submitBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 text-sm sm:text-base rounded-lg shadow-md transition transform active:scale-95">
-                        Submit Live Report to Madam
+                    <div class="text-center py-2">
+                        <h3 class="text-lg sm:text-2xl font-bold text-white">Class Select Karein</h3>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+                        <button type="button" onclick="chooseClass('Playgroup')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Playgroup</button>
+                        <button type="button" onclick="chooseClass('Nursery')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Nursery</button>
+                        <button type="button" onclick="chooseClass('Prep')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Prep</button>
+                        <button type="button" onclick="chooseClass('Class 1')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Class 1</button>
+                        <button type="button" onclick="chooseClass('Class 2')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Class 2</button>
+                        <button type="button" onclick="chooseClass('Class 3')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Class 3</button>
+                        <button type="button" onclick="chooseClass('Class 4')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Class 4</button>
+                        <button type="button" onclick="chooseClass('Class 5')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Class 5</button>
+                        <button type="button" onclick="chooseClass('Class 6')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Class 6</button>
+                        <button type="button" onclick="chooseClass('Class 7')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Class 7</button>
+                        <button type="button" onclick="chooseClass('Class 8')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Class 8</button>
+                        <button type="button" onclick="chooseClass('Class 9')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm">Class 9</button>
+                        <button type="button" onclick="chooseClass('Class 10')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-2 rounded-xl text-xs sm:text-sm shadow-sm col-span-2">Class 10</button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: SUBJECT SELECTION -->
+                <div id="wizardStep3" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <button type="button" onclick="goToStep(2)" class="text-xs bg-slate-800 text-blue-300 border border-blue-900 px-3 py-1 rounded-lg font-bold hover:bg-slate-700">← Back to Step 2</button>
+                        <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Step 3 of 4</span>
+                    </div>
+                    <div class="text-center py-2">
+                        <h3 class="text-lg sm:text-2xl font-bold text-white">Subject / Period Select Karein</h3>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <button type="button" onclick="chooseSubject('English')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">English</button>
+                        <button type="button" onclick="chooseSubject('Urdu')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">Urdu</button>
+                        <button type="button" onclick="chooseSubject('Math')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">Math</button>
+                        <button type="button" onclick="chooseSubject('Islamiyat')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">Islamiyat</button>
+                        <button type="button" onclick="chooseSubject('Science')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">Science</button>
+                        <button type="button" onclick="chooseSubject('S.ST')" class="chip-btn bg-slate-950 hover:bg-blue-600 hover:text-white border-2 border-blue-900/60 text-slate-100 font-bold py-3 px-4 rounded-xl text-sm sm:text-base shadow-sm">S.ST</button>
+                    </div>
+                </div>
+
+                <!-- STEP 4: DETAILS & SUBMIT -->
+                <div id="wizardStep4" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <button type="button" onclick="goToStep(3)" class="text-xs bg-slate-800 text-blue-300 border border-blue-900 px-3 py-1 rounded-lg font-bold hover:bg-slate-700">← Back to Step 3</button>
+                        <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Step 4 of 4</span>
+                    </div>
+                    <div class="py-1">
+                        <label class="block text-sm sm:text-base font-bold text-white mb-2">Aaj Class Me Kya Parhaya? (Lesson / Work Done)</label>
+                        <textarea id="workDone" rows="4" required placeholder="Detail se likhein..." class="w-full p-3 text-sm sm:text-base bg-slate-950 text-white border-2 border-blue-900/60 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-500"></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3.5 text-base sm:text-lg rounded-xl shadow-lg shadow-blue-950 transition transform active:scale-95">
+                        🚀 Submit Report To Madam
                     </button>
                 </div>
+
             </form>
         </section>
 
         <!-- TAB 2: DIARY GENERATOR -->
         <section id="diaryTab" class="hidden space-y-3">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200">
-                    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
-                        <h2 class="text-base font-bold text-slate-900">Daily Class Diary Entry</h2>
-                        <span id="liveDateDisplay" class="text-xs font-semibold bg-slate-100 text-slate-800 px-2.5 py-1 rounded-full"></span>
+                <div class="bg-slate-900 rounded-2xl shadow-xl p-4 border border-blue-900/50">
+                    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+                        <h2 class="text-base font-bold text-white">Daily Class Diary Entry</h2>
+                        <span id="liveDateDisplay" class="text-xs font-semibold bg-slate-950 text-blue-300 border border-blue-900/50 px-2.5 py-1 rounded-full"></span>
                     </div>
 
                     <form id="entryForm" onsubmit="saveDiaryEntry(event)">
                         <div class="grid grid-cols-2 gap-2 mb-3">
                             <div>
-                                <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Select Class</label>
-                                <select id="diaryClass" onchange="loadClassDiary(this.value)" class="w-full p-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:border-slate-800" required>
+                                <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Select Class</label>
+                                <select id="diaryClass" onchange="loadClassDiary(this.value)" class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg focus:outline-none focus:border-blue-500" required>
                                     <option value="">-- Choose Class --</option>
                                     <option value="Playgroup">Playgroup</option>
                                     <option value="Nursery">Nursery</option>
@@ -294,70 +331,70 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Date</label>
-                                <input type="date" id="diaryDate" class="w-full p-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:border-slate-800" required>
+                                <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Date</label>
+                                <input type="date" id="diaryDate" class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg focus:outline-none focus:border-blue-500" required>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2 mb-3">
                             <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-700">English</label>
-                                <textarea id="d_english" placeholder="English homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                                <label class="block text-[10px] font-bold uppercase text-slate-300">English</label>
+                                <textarea id="d_english" placeholder="English homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-700">Urdu</label>
-                                <textarea id="d_urdu" placeholder="Urdu homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                                <label class="block text-[10px] font-bold uppercase text-slate-300">Urdu</label>
+                                <textarea id="d_urdu" placeholder="Urdu homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-700">Math</label>
-                                <textarea id="d_math" placeholder="Math homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                                <label class="block text-[10px] font-bold uppercase text-slate-300">Math</label>
+                                <textarea id="d_math" placeholder="Math homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-700">Islamiyat</label>
-                                <textarea id="d_islamiyat" placeholder="Islamiyat homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                                <label class="block text-[10px] font-bold uppercase text-slate-300">Islamiyat</label>
+                                <textarea id="d_islamiyat" placeholder="Islamiyat homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-700">SST</label>
-                                <textarea id="d_sst" placeholder="SST homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                                <label class="block text-[10px] font-bold uppercase text-slate-300">SST</label>
+                                <textarea id="d_sst" placeholder="SST homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-700">Science</label>
-                                <textarea id="d_science" placeholder="Science homework..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                                <label class="block text-[10px] font-bold uppercase text-slate-300">Science</label>
+                                <textarea id="d_science" placeholder="Science homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">General Note / Announcements</label>
-                            <textarea id="d_generalNote" placeholder="e.g. Test on Monday..." class="w-full p-2 text-xs border border-slate-300 rounded-lg h-10 resize-none"></textarea>
+                            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">General Note / Announcements</label>
+                            <textarea id="d_generalNote" placeholder="e.g. Test on Monday..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
                         </div>
 
-                        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 text-xs sm:text-sm rounded-lg shadow transition">
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 text-xs sm:text-sm rounded-lg shadow transition">
                             💾 Save / Update Class Diary
                         </button>
                     </form>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 flex flex-col justify-between">
+                <div class="bg-slate-900 rounded-2xl shadow-xl p-4 border border-blue-900/50 flex flex-col justify-between">
                     <div>
-                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
-                            <h2 class="text-base font-bold text-slate-900">Saved Class Cards</h2>
-                            <span id="classCountBadge" class="text-xs font-semibold bg-blue-100 text-blue-900 px-2.5 py-0.5 rounded-full">0 Saved</span>
+                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+                            <h2 class="text-base font-bold text-white">Saved Class Cards</h2>
+                            <span id="classCountBadge" class="text-xs font-semibold bg-blue-950 text-blue-300 border border-blue-800 px-2.5 py-0.5 rounded-full">0 Saved</span>
                         </div>
 
                         <div class="flex flex-wrap gap-2 mb-3">
-                            <button onclick="generateAndPrintAll()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm flex justify-center items-center gap-1">
+                            <button onclick="generateAndPrintAll()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm flex justify-center items-center gap-1">
                                 🖨️ Print Window
                             </button>
-                            <button onclick="downloadPDF()" class="flex-1 bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm flex justify-center items-center gap-1">
-                                📥 Download PDF Only
+                            <button onclick="downloadImage()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm flex justify-center items-center gap-1">
+                                🖼️ Download Image Only
                             </button>
-                            <button onclick="clearAllData()" class="bg-slate-500 hover:bg-slate-600 text-white font-bold py-2 px-3 rounded-lg text-xs transition">
+                            <button onclick="clearAllData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-3 rounded-lg text-xs transition border border-slate-700">
                                 Reset All
                             </button>
                         </div>
 
                         <div id="summaryContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-96 overflow-y-auto pr-1">
-                            <p class="text-xs text-slate-400 col-span-2 py-8 text-center">No class diaries saved yet.</p>
+                            <p class="text-xs text-slate-500 col-span-2 py-8 text-center">No class diaries saved yet.</p>
                         </div>
                     </div>
                 </div>
@@ -365,21 +402,24 @@
         </section>
 
         <!-- TAB 3: MADAM VIEW -->
-        <section id="madamTab" class="hidden bg-white rounded-xl shadow-md p-4 border border-slate-200">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-2 border-b">
-                <div class="flex items-center gap-2">
-                    <h2 class="text-lg sm:text-xl font-bold text-slate-800">Madam Dashboard</h2>
-                    <button onclick="logoutMadam()" class="text-xs bg-red-100 hover:bg-red-200 text-red-600 px-2 py-1 rounded font-semibold transition" title="Logout Madam">Logout 🔒</button>
+        <section id="madamTab" class="hidden bg-slate-900 rounded-2xl shadow-xl p-4 border border-blue-900/50">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-2 border-b border-slate-800">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h2 class="text-lg sm:text-xl font-bold text-white">Madam Dashboard</h2>
+                    <button onclick="clearAllReports()" class="text-xs bg-red-900 hover:bg-red-800 text-white border border-red-700 px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 shadow-sm">
+                        🗑️ Clear All Reports
+                    </button>
+                    <button onclick="logoutMadam()" class="text-xs bg-slate-800 hover:bg-slate-700 text-red-300 border border-slate-700 px-2 py-1 rounded font-semibold transition" title="Logout Madam">Logout 🔒</button>
                 </div>
                 <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                    <button onclick="enableSoundAndPermission()" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1 shadow-sm">
+                    <button onclick="enableSoundAndPermission()" class="bg-blue-950 hover:bg-blue-900 text-blue-200 border border-blue-700 text-xs px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1 shadow-sm">
                         🔔 Enable Sound & Alerts
                     </button>
-                    <span id="reportCount" class="bg-slate-100 text-slate-800 text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap">0 Reports</span>
+                    <span id="reportCount" class="bg-slate-950 text-blue-300 border border-blue-900/60 text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap">0 Reports</span>
                 </div>
             </div>
 
-            <div id="toastNotif" class="hidden mb-4 bg-emerald-100 border-l-4 border-emerald-500 text-emerald-800 p-3 rounded shadow-sm text-xs sm:text-sm" role="alert">
+            <div id="toastNotif" class="hidden mb-4 bg-blue-950 border-l-4 border-blue-500 text-blue-100 p-3 rounded shadow-sm text-xs sm:text-sm" role="alert">
                 <p class="font-bold">Naya Notification!</p>
                 <p id="toastMsg">Aik naye period ki report submit hui hai.</p>
             </div>
@@ -392,22 +432,22 @@
     </div>
 
     <!-- LOGIN MODAL -->
-    <div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 text-center space-y-3">
-            <h3 class="text-lg font-bold text-slate-800">Madam Login</h3>
-            <p class="text-xs text-slate-500">Madam View access karne ke liye Login karein</p>
+    <div id="loginModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-900 rounded-2xl shadow-2xl border border-blue-900/60 max-w-sm w-full p-5 text-center space-y-3">
+            <h3 class="text-lg font-bold text-white">Madam Login</h3>
+            <p class="text-xs text-slate-400">Madam View access karne ke liye Login karein</p>
             <div class="space-y-2">
-                <input type="text" id="loginUser" placeholder="Username" class="w-full p-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-slate-800">
-                <input type="password" id="loginPass" placeholder="Password" class="w-full p-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-slate-800">
+                <input type="text" id="loginUser" placeholder="Username" class="w-full p-2 text-xs sm:text-sm bg-slate-950 text-white border border-blue-900/60 rounded-lg focus:outline-none focus:border-blue-500">
+                <input type="password" id="loginPass" placeholder="Password" class="w-full p-2 text-xs sm:text-sm bg-slate-950 text-white border border-blue-900/60 rounded-lg focus:outline-none focus:border-blue-500">
             </div>
             <div class="flex gap-2 pt-2">
-                <button onclick="closeLoginModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-1.5 text-xs sm:text-sm rounded-lg">Cancel</button>
-                <button onclick="verifyMadamLogin()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-semibold py-1.5 text-xs sm:text-sm rounded-lg shadow">Login</button>
+                <button onclick="closeLoginModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-1.5 text-xs sm:text-sm rounded-lg">Cancel</button>
+                <button onclick="verifyMadamLogin()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-1.5 text-xs sm:text-sm rounded-lg shadow">Login</button>
             </div>
         </div>
     </div>
 
-    <!-- EXECUTIVE SLIPS CONTAINER (PDF OUTPUT GENERATOR) -->
+    <!-- EXECUTIVE SLIPS CONTAINER (IMAGE / PRINT OUTPUT GENERATOR) -->
     <div id="slipsContainer" class="slips-container"></div>
 
     <script>
@@ -437,20 +477,20 @@
             document.getElementById('diaryTab').classList.add('hidden');
             document.getElementById('madamTab').classList.add('hidden');
 
-            document.getElementById('tabBtn-reporter').className = "bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm";
-            document.getElementById('tabBtn-diary').className = "bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm";
-            document.getElementById('tabBtn-madam').className = "bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm";
+            document.getElementById('tabBtn-reporter').className = "bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm border border-blue-900/40";
+            document.getElementById('tabBtn-diary').className = "bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm border border-blue-900/40";
+            document.getElementById('tabBtn-madam').className = "bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm border border-blue-900/40";
 
             if (tab === 'reporter') {
                 document.getElementById('reporterTab').classList.remove('hidden');
-                document.getElementById('tabBtn-reporter').className = "bg-slate-900 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm ring-2 ring-blue-500";
+                document.getElementById('tabBtn-reporter').className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm ring-2 ring-blue-400";
             } else if (tab === 'diary') {
                 document.getElementById('diaryTab').classList.remove('hidden');
-                document.getElementById('tabBtn-diary').className = "bg-slate-900 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm ring-2 ring-blue-500";
+                document.getElementById('tabBtn-diary').className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm ring-2 ring-blue-400";
             } else if (tab === 'madam') {
                 if (isMadamLoggedIn) {
                     document.getElementById('madamTab').classList.remove('hidden');
-                    document.getElementById('tabBtn-madam').className = "bg-slate-900 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm ring-2 ring-blue-500";
+                    document.getElementById('tabBtn-madam').className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm ring-2 ring-blue-400";
                     document.getElementById('notifBadge').classList.add('hidden');
                 } else {
                     document.getElementById('loginModal').classList.remove('hidden');
@@ -458,11 +498,67 @@
             }
         }
 
-        function selectChip(category, value, element) {
-            const chips = document.querySelectorAll(`.${category}-chip`);
-            chips.forEach(chip => chip.classList.remove('selected'));
-            element.classList.add('selected');
-            document.getElementById(`${category}Name`).value = value;
+        /* SCREEN-BY-SCREEN WIZARD CONTROLLER */
+        function goToStep(stepNumber) {
+            document.getElementById('wizardStep1').classList.add('hidden');
+            document.getElementById('wizardStep2').classList.add('hidden');
+            document.getElementById('wizardStep3').classList.add('hidden');
+            document.getElementById('wizardStep4').classList.add('hidden');
+
+            if (stepNumber === 1) {
+                document.getElementById('teacherName').value = '';
+                document.getElementById('className').value = '';
+                document.getElementById('subjectName').value = '';
+                document.getElementById('workDone').value = '';
+                document.getElementById('selectionSummary').classList.add('hidden');
+                document.getElementById('wizardStep1').classList.remove('hidden');
+            } else if (stepNumber === 2) {
+                document.getElementById('className').value = '';
+                document.getElementById('subjectName').value = '';
+                updateBadges();
+                document.getElementById('wizardStep2').classList.remove('hidden');
+            } else if (stepNumber === 3) {
+                document.getElementById('subjectName').value = '';
+                updateBadges();
+                document.getElementById('wizardStep3').classList.remove('hidden');
+            } else if (stepNumber === 4) {
+                updateBadges();
+                document.getElementById('wizardStep4').classList.remove('hidden');
+            }
+        }
+
+        function chooseTeacher(name) {
+            document.getElementById('teacherName').value = name;
+            goToStep(2);
+        }
+
+        function chooseClass(cls) {
+            document.getElementById('className').value = cls;
+            goToStep(3);
+        }
+
+        function chooseSubject(subj) {
+            document.getElementById('subjectName').value = subj;
+            goToStep(4);
+        }
+
+        function updateBadges() {
+            const t = document.getElementById('teacherName').value;
+            const c = document.getElementById('className').value;
+            const s = document.getElementById('subjectName').value;
+
+            const summary = document.getElementById('selectionSummary');
+            const badgeT = document.getElementById('badgeTeacher');
+            const badgeC = document.getElementById('badgeClass');
+            const badgeS = document.getElementById('badgeSubject');
+
+            if (t || c || s) {
+                summary.classList.remove('hidden');
+            }
+
+            if (t) { badgeT.innerHTML = `👤 ${t}`; badgeT.classList.remove('hidden'); } else { badgeT.classList.add('hidden'); }
+            if (c) { badgeC.innerHTML = `🏫 ${c}`; badgeC.classList.remove('hidden'); } else { badgeC.classList.add('hidden'); }
+            if (s) { badgeS.innerHTML = `📚 ${s}`; badgeS.classList.remove('hidden'); } else { badgeS.classList.add('hidden'); }
         }
 
         function submitReport(e) {
@@ -470,9 +566,10 @@
             const teacher = document.getElementById('teacherName').value;
             const className = document.getElementById('className').value;
             const subject = document.getElementById('subjectName').value;
+            const work = document.getElementById('workDone').value;
 
-            if(!teacher || !className || !subject) {
-                alert("Please Teacher, Class aur Subject zaroor select karein!");
+            if(!teacher || !className || !subject || !work) {
+                alert("Please tamam steps complete karein!");
                 return;
             }
 
@@ -484,25 +581,20 @@
                 teacher: teacher,
                 class: className,
                 subject: subject,
-                work: document.getElementById('workDone').value,
+                work: work,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
             db.collection('reports').add(newReport).then(() => {
                 alert("Report Madam tak bhej di gayi hai!");
-                document.getElementById('reportForm').reset();
-                document.querySelectorAll('.chip-btn').forEach(chip => chip.classList.remove('selected'));
-                document.getElementById('teacherName').value = '';
-                document.getElementById('className').value = '';
-                document.getElementById('subjectName').value = '';
-
+                goToStep(1);
                 submitBtn.disabled = false;
-                submitBtn.innerText = "Submit Live Report to Madam";
+                submitBtn.innerText = "🚀 Submit Report To Madam";
             }).catch(error => {
                 alert("Error: " + error.message);
                 submitBtn.disabled = false;
-                submitBtn.innerText = "Submit Live Report to Madam";
+                submitBtn.innerText = "🚀 Submit Report To Madam";
             });
         }
 
@@ -564,25 +656,25 @@
             countBadge.innerText = `${keys.length} Saved`;
 
             if (keys.length === 0) {
-                container.innerHTML = '<p class="text-xs text-slate-400 col-span-2 py-8 text-center">No class diaries saved yet.</p>';
+                container.innerHTML = '<p class="text-xs text-slate-500 col-span-2 py-8 text-center">No class diaries saved yet.</p>';
                 return;
             }
 
             keys.forEach(cls => {
                 const item = diaryStore[cls];
                 const cardHtml = `
-                    <div class="border border-slate-200 rounded-lg p-2.5 bg-slate-50 text-xs">
-                        <div class="flex justify-between items-center pb-1 mb-1 border-b border-slate-200">
-                            <span class="font-bold text-slate-900">${cls}</span>
-                            <button onclick="deleteClass('${cls}')" class="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded">Delete</button>
+                    <div class="border border-blue-900/50 rounded-lg p-2.5 bg-slate-950 text-xs">
+                        <div class="flex justify-between items-center pb-1 mb-1 border-b border-slate-800">
+                            <span class="font-bold text-white">${cls}</span>
+                            <button onclick="deleteClass('${cls}')" class="text-[10px] bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 px-1.5 py-0.5 rounded">Delete</button>
                         </div>
-                        <div class="space-y-0.5 text-[11px]">
-                            <div><strong>Eng:</strong> ${item.english}</div>
-                            <div><strong>Urdu:</strong> ${item.urdu}</div>
-                            <div><strong>Math:</strong> ${item.math}</div>
-                            <div><strong>Isl:</strong> ${item.islamiyat}</div>
-                            <div><strong>SST:</strong> ${item.sst}</div>
-                            <div><strong>Sci:</strong> ${item.science}</div>
+                        <div class="space-y-0.5 text-[11px] text-slate-300">
+                            <div><strong class="text-blue-400">Eng:</strong> ${item.english}</div>
+                            <div><strong class="text-blue-400">Urdu:</strong> ${item.urdu}</div>
+                            <div><strong class="text-blue-400">Math:</strong> ${item.math}</div>
+                            <div><strong class="text-blue-400">Isl:</strong> ${item.islamiyat}</div>
+                            <div><strong class="text-blue-400">SST:</strong> ${item.sst}</div>
+                            <div><strong class="text-blue-400">Sci:</strong> ${item.science}</div>
                         </div>
                     </div>
                 `;
@@ -604,7 +696,7 @@
             }
         }
 
-        /* BUILD PRO CORPORATE SLIPS FOR PDF / PRINT GENERATION ONLY */
+        /* BUILD PRO CORPORATE SLIPS FOR IMAGE / PRINT GENERATION ONLY */
         function buildSlipsHTML() {
             const keys = Object.keys(diaryStore);
             const slipsContainer = document.getElementById('slipsContainer');
@@ -615,15 +707,19 @@
                 const slipHtml = `
                     <div class="slip">
                         <div class="slip-brand">
-                            <div>
-                                <h1>Pine Hills School</h1>
-                                <div class="slip-brand-subtitle">Official Daily Learning & Homework Diary Slip</div>
-                            </div>
+                            <h1>Pine Hills School</h1>
+                            <div class="slip-brand-subtitle">Official Daily Learning & Homework Diary Slip</div>
                         </div>
-                        <div class="slip-meta-strip">
-                            <div>Class & Section: <span class="slip-badge">${cls}</span></div>
-                            <div>Date: <strong>${item.date}</strong></div>
-                        </div>
+                        <table class="slip-meta-table">
+                            <tr>
+                                <td style="text-align:left;">
+                                    Class & Section: <span class="class-text-highlight">${cls}</span>
+                                </td>
+                                <td style="text-align:right;">
+                                    Date: <strong>${item.date}</strong>
+                                </td>
+                            </tr>
+                        </table>
                         <table class="diary-table">
                             <thead>
                                 <tr>
@@ -643,11 +739,22 @@
                         <div class="slip-footer-note">
                             <strong>📌 Parent Announcement:</strong> <span>${item.generalNote}</span>
                         </div>
-                        <div class="slip-signatures">
-                            <div class="sig-line">Class Teacher Signature</div>
-                            <div class="sig-line">School Coordinator</div>
-                            <div class="sig-line">Parent / Guardian Signature</div>
-                        </div>
+                        <table class="slip-signatures-table">
+                            <tr>
+                                <td class="sig-td">
+                                    <div class="signature-art">Ali</div>
+                                    <div class="sig-line">Class Teacher Signature</div>
+                                </td>
+                                <td class="sig-td">
+                                    <div class="signature-art">Ali</div>
+                                    <div class="sig-line">School Coordinator</div>
+                                </td>
+                                <td class="sig-td">
+                                    <div class="signature-art" style="visibility: hidden;">Ali</div>
+                                    <div class="sig-line">Parent / Guardian Signature</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 `;
                 slipsContainer.innerHTML += slipHtml;
@@ -664,7 +771,8 @@
             window.print();
         }
 
-        function downloadPDF() {
+        /* BULLETPROOF DIRECT IMAGE DOWNLOAD FUNCTION */
+        function downloadImage() {
             const keys = Object.keys(diaryStore);
             if (keys.length === 0) {
                 alert('Pehle kam se kam ek class ki diary save karein!');
@@ -675,17 +783,31 @@
 
             const element = document.getElementById('slipsContainer');
             element.style.display = 'block';
+            element.style.position = 'fixed';
+            element.style.left = '-9999px';
+            element.style.top = '0';
+            element.style.width = '800px';
 
-            const opt = {
-                margin:       8,
-                filename:     `PineHills_Diaries_${todayStr}.pdf`,
-                image:        { type: 'jpeg', quality: 1.0 },
-                html2canvas:  { scale: 3, useCORS: true, logging: false },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element).save().then(() => {
+            html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                width: 800,
+                windowWidth: 800,
+                scrollX: 0,
+                scrollY: 0
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `PineHills_Diaries_${todayStr}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
                 element.style.display = 'none';
+                element.style.position = 'static';
+            }).catch(err => {
+                alert('Image generate karne me error aaya: ' + err.message);
+                element.style.display = 'none';
+                element.style.position = 'static';
             });
         }
 
@@ -775,6 +897,27 @@
             }
         }
 
+        function clearAllReports() {
+            const pwd = prompt("Tamam reports delete karne ke liye Password enter karein:");
+            if (pwd === "1") {
+                if (confirm("Kya aap waqai tamaam live reports delete karna chahte hain? Pehle se mojood tamam reports permanently khatam ho jayengi.")) {
+                    db.collection('reports').get().then((snapshot) => {
+                        const batch = db.batch();
+                        snapshot.forEach((doc) => {
+                            batch.delete(doc.ref);
+                        });
+                        return batch.commit();
+                    }).then(() => {
+                        showToast("Tamam reports kamyabi se delete kar di gayi hain!");
+                    }).catch((error) => {
+                        alert("Error clearing reports: " + error.message);
+                    });
+                }
+            } else if (pwd !== null) {
+                alert("❌ Wrong Password!");
+            }
+        }
+
         db.collection('reports').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
             const reportsList = document.getElementById('reportsList');
             reportsList.innerHTML = '';
@@ -794,20 +937,20 @@
                 if (index === 0) latestDoc = report;
 
                 const card = `
-                    <div class="bg-slate-50 border-l-4 border-slate-900 p-3 rounded-r-lg shadow-sm relative">
-                        <div class="flex justify-between items-start mb-1 gap-2">
+                    <div class="bg-slate-950 border-l-4 border-blue-500 p-3.5 rounded-r-xl shadow-md border border-blue-900/40 relative">
+                        <div class="flex justify-between items-start mb-2 gap-2">
                             <div>
-                                <h3 class="font-bold text-slate-800 text-sm sm:text-base">${report.teacher || 'Unknown Teacher'}</h3>
-                                <p class="text-xs font-semibold text-blue-900">${report.class} - ${report.subject}</p>
+                                <h3 class="font-bold text-white text-sm sm:text-base">${report.teacher || 'Unknown Teacher'}</h3>
+                                <p class="text-xs font-semibold text-blue-400">${report.class} - ${report.subject}</p>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] sm:text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded whitespace-nowrap">${report.timestamp || ''}</span>
-                                <button onclick="deleteReport('${docId}')" title="Delete Report" class="bg-red-100 hover:bg-red-200 text-red-600 p-1.5 rounded-lg text-xs transition font-semibold">
+                                <span class="text-[10px] sm:text-xs bg-slate-900 border border-slate-800 text-slate-400 px-2 py-0.5 rounded whitespace-nowrap">${report.timestamp || ''}</span>
+                                <button onclick="deleteReport('${docId}')" title="Delete Report" class="bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 p-1.5 rounded-lg text-xs transition font-semibold">
                                     🗑️ Delete
                                 </button>
                             </div>
                         </div>
-                        <p class="text-slate-700 text-xs sm:text-sm mt-1 bg-white p-2 rounded border border-slate-200 whitespace-pre-line">${report.work}</p>
+                        <p class="text-slate-200 text-xs sm:text-sm mt-1 bg-slate-900 p-2.5 rounded-lg border border-slate-800 whitespace-pre-line">${report.work}</p>
                     </div>
                 `;
                 reportsList.innerHTML += card;
