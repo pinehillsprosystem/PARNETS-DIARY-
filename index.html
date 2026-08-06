@@ -9,6 +9,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <!-- html2canvas Library for Image Download -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- JSZip & FileSaver for Multiple Image Download as ZIP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <!-- Handwritten Font for Signature -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <style>
@@ -43,10 +46,10 @@
       border-radius: 8px;
       padding: 24px;
       margin-bottom: 20px;
-      page-break-after: always;
       font-family: Arial, Helvetica, sans-serif;
       color: #0f172a;
       box-sizing: border-box;
+      width: 800px;
     }
     .slip-brand {
       background-color: #0f172a;
@@ -168,7 +171,7 @@
       body { background: white !important; padding: 0 !important; color: black !important; }
       nav, .portal-container, #loginModal { display: none !important; }
       .slips-container { display: block !important; background: transparent; padding: 0; width: 100% !important; }
-      .slip { box-shadow: none; margin-bottom: 0; border: 1.5px solid #0f172a; }
+      .slip { box-shadow: none; margin-bottom: 0; border: 1.5px solid #0f172a; page-break-after: always; }
     }
   </style>
 </head>
@@ -385,7 +388,7 @@
                             <button onclick="generateAndPrintAll()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm flex justify-center items-center gap-1">
                                 🖨️ Print Window
                             </button>
-                            <button onclick="downloadImage()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm flex justify-center items-center gap-1">
+                            <button onclick="downloadImage()" id="downloadImgBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm flex justify-center items-center gap-1">
                                 🖼️ Download Image Only
                             </button>
                             <button onclick="clearAllData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-3 rounded-lg text-xs transition border border-slate-700">
@@ -696,69 +699,62 @@
             }
         }
 
-        /* BUILD PRO CORPORATE SLIPS FOR IMAGE / PRINT GENERATION ONLY */
-        function buildSlipsHTML() {
-            const keys = Object.keys(diaryStore);
-            const slipsContainer = document.getElementById('slipsContainer');
-            slipsContainer.innerHTML = '';
-
-            keys.forEach(cls => {
-                const item = diaryStore[cls];
-                const slipHtml = `
-                    <div class="slip">
-                        <div class="slip-brand">
-                            <h1>Pine Hills School</h1>
-                            <div class="slip-brand-subtitle">Official Daily Learning & Homework Diary Slip</div>
-                        </div>
-                        <table class="slip-meta-table">
-                            <tr>
-                                <td style="text-align:left;">
-                                    Class & Section: <span class="class-text-highlight">${cls}</span>
-                                </td>
-                                <td style="text-align:right;">
-                                    Date: <strong>${item.date}</strong>
-                                </td>
-                            </tr>
-                        </table>
-                        <table class="diary-table">
-                            <thead>
-                                <tr>
-                                    <th>Subject</th>
-                                    <th>Homework & Class Work Updates</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td class="subj-col">English</td><td class="content-col">${item.english}</td></tr>
-                                <tr><td class="subj-col">Urdu</td><td class="content-col">${item.urdu}</td></tr>
-                                <tr><td class="subj-col">Math</td><td class="content-col">${item.math}</td></tr>
-                                <tr><td class="subj-col">Islamiyat</td><td class="content-col">${item.islamiyat}</td></tr>
-                                <tr><td class="subj-col">S.S.T</td><td class="content-col">${item.sst}</td></tr>
-                                <tr><td class="subj-col">Science</td><td class="content-col">${item.science}</td></tr>
-                            </tbody>
-                        </table>
-                        <div class="slip-footer-note">
-                            <strong>📌 Parent Announcement:</strong> <span>${item.generalNote}</span>
-                        </div>
-                        <table class="slip-signatures-table">
-                            <tr>
-                                <td class="sig-td">
-                                    <div class="signature-art">Ali</div>
-                                    <div class="sig-line">Class Teacher Signature</div>
-                                </td>
-                                <td class="sig-td">
-                                    <div class="signature-art">Ali</div>
-                                    <div class="sig-line">School Coordinator</div>
-                                </td>
-                                <td class="sig-td">
-                                    <div class="signature-art" style="visibility: hidden;">Ali</div>
-                                    <div class="sig-line">Parent / Guardian Signature</div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                `;
-                slipsContainer.innerHTML += slipHtml;
-            });
+        /* CREATE A SINGLE DIARY SLIP HTML ELEMENT */
+        function createSingleSlipElement(cls, item) {
+            const slipDiv = document.createElement('div');
+            slipDiv.className = 'slip';
+            slipDiv.innerHTML = `
+                <div class="slip-brand">
+                    <h1>Pine Hills School</h1>
+                    <div class="slip-brand-subtitle">Official Daily Learning & Homework Diary Slip</div>
+                </div>
+                <table class="slip-meta-table">
+                    <tr>
+                        <td style="text-align:left;">
+                            Class & Section: <span class="class-text-highlight">${cls}</span>
+                        </td>
+                        <td style="text-align:right;">
+                            Date: <strong>${item.date}</strong>
+                        </td>
+                    </tr>
+                </table>
+                <table class="diary-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Homework & Class Work Updates</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="subj-col">English</td><td class="content-col">${item.english}</td></tr>
+                        <tr><td class="subj-col">Urdu</td><td class="content-col">${item.urdu}</td></tr>
+                        <tr><td class="subj-col">Math</td><td class="content-col">${item.math}</td></tr>
+                        <tr><td class="subj-col">Islamiyat</td><td class="content-col">${item.islamiyat}</td></tr>
+                        <tr><td class="subj-col">S.S.T</td><td class="content-col">${item.sst}</td></tr>
+                        <tr><td class="subj-col">Science</td><td class="content-col">${item.science}</td></tr>
+                    </tbody>
+                </table>
+                <div class="slip-footer-note">
+                    <strong>📌 Parent Announcement:</strong> <span>${item.generalNote}</span>
+                </div>
+                <table class="slip-signatures-table">
+                    <tr>
+                        <td class="sig-td">
+                            <div class="signature-art">Ali</div>
+                            <div class="sig-line">Class Teacher Signature</div>
+                        </td>
+                        <td class="sig-td">
+                            <div class="signature-art">Ali</div>
+                            <div class="sig-line">School Coordinator</div>
+                        </td>
+                        <td class="sig-td">
+                            <div class="signature-art" style="visibility: hidden;">Ali</div>
+                            <div class="sig-line">Parent / Guardian Signature</div>
+                        </td>
+                    </tr>
+                </table>
+            `;
+            return slipDiv;
         }
 
         function generateAndPrintAll() {
@@ -767,48 +763,83 @@
                 alert('Please add diary entries for at least one class before printing!');
                 return;
             }
-            buildSlipsHTML();
+            const slipsContainer = document.getElementById('slipsContainer');
+            slipsContainer.innerHTML = '';
+            keys.forEach(cls => {
+                slipsContainer.appendChild(createSingleSlipElement(cls, diaryStore[cls]));
+            });
             window.print();
         }
 
-        /* BULLETPROOF DIRECT IMAGE DOWNLOAD FUNCTION */
-        function downloadImage() {
+        /* INDIVIDUAL HIGH QUALITY IMAGE DOWNLOADER (SINGLE OR ZIP) */
+        async function downloadImage() {
             const keys = Object.keys(diaryStore);
             if (keys.length === 0) {
                 alert('Pehle kam se kam ek class ki diary save karein!');
                 return;
             }
 
-            buildSlipsHTML();
+            const downloadBtn = document.getElementById('downloadImgBtn');
+            downloadBtn.disabled = true;
+            downloadBtn.innerText = "⏳ Generating...";
 
-            const element = document.getElementById('slipsContainer');
-            element.style.display = 'block';
-            element.style.position = 'fixed';
-            element.style.left = '-9999px';
-            element.style.top = '0';
-            element.style.width = '800px';
+            // Dedicated hidden temp container for individual rendering
+            let tempDiv = document.createElement('div');
+            tempDiv.style.position = 'fixed';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '0';
+            tempDiv.style.width = '800px';
+            tempDiv.style.backgroundColor = '#ffffff';
+            document.body.appendChild(tempDiv);
 
-            html2canvas(element, {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: '#ffffff',
-                width: 800,
-                windowWidth: 800,
-                scrollX: 0,
-                scrollY: 0
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `PineHills_Diaries_${todayStr}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                element.style.display = 'none';
-                element.style.position = 'static';
-            }).catch(err => {
+            try {
+                if (keys.length === 1) {
+                    // Single class - Direct image download
+                    const cls = keys[0];
+                    const slipEl = createSingleSlipElement(cls, diaryStore[cls]);
+                    tempDiv.appendChild(slipEl);
+
+                    const canvas = await html2canvas(slipEl, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        width: 800
+                    });
+
+                    const link = document.createElement('a');
+                    link.download = `Diary_${cls.replace(/\s+/g, '_')}_${todayStr}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } else {
+                    // Multiple classes - Generate ZIP containing individual images
+                    const zip = new JSZip();
+
+                    for (let cls of keys) {
+                        tempDiv.innerHTML = '';
+                        const slipEl = createSingleSlipElement(cls, diaryStore[cls]);
+                        tempDiv.appendChild(slipEl);
+
+                        const canvas = await html2canvas(slipEl, {
+                            scale: 2,
+                            useCORS: true,
+                            backgroundColor: '#ffffff',
+                            width: 800
+                        });
+
+                        const imgData = canvas.toDataURL('image/png').split(',')[1];
+                        zip.file(`Diary_${cls.replace(/\s+/g, '_')}_${todayStr}.png`, imgData, {base64: true});
+                    }
+
+                    const content = await zip.generateAsync({type: "blob"});
+                    saveAs(content, `PineHills_Diaries_${todayStr}.zip`);
+                }
+            } catch (err) {
                 alert('Image generate karne me error aaya: ' + err.message);
-                element.style.display = 'none';
-                element.style.position = 'static';
-            });
+            } finally {
+                document.body.removeChild(tempDiv);
+                downloadBtn.disabled = false;
+                downloadBtn.innerText = "🖼️ Download Image Only";
+            }
         }
 
         function unlockAudioOnInteraction() {
