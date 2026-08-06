@@ -196,10 +196,10 @@
         </div>
     </nav>
 
-    <div class="portal-container max-w-4xl mx-auto p-2 sm:p-4">
+    <div class="portal-container max-w-7xl mx-auto p-2 sm:p-6">
 
         <!-- TAB 1: LIVE REPORTING (FULL SCREEN WIZARD FLOW) -->
-        <section id="reporterTab" class="space-y-3">
+        <section id="reporterTab" class="space-y-3 max-w-4xl mx-auto">
             <form id="reportForm" onsubmit="submitReport(event)" class="bg-slate-900 rounded-2xl shadow-2xl p-4 sm:p-6 border border-blue-900/50">
                 
                 <input type="hidden" id="teacherName" required>
@@ -303,109 +303,117 @@
             </form>
         </section>
 
-        <!-- TAB 2: DIARY GENERATOR -->
-        <section id="diaryTab" class="hidden space-y-3">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div class="bg-slate-900 rounded-2xl shadow-xl p-4 border border-blue-900/50">
-                    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
-                        <h2 class="text-base font-bold text-white">Daily Class Diary Entry</h2>
-                        <span id="liveDateDisplay" class="text-xs font-semibold bg-slate-950 text-blue-300 border border-blue-900/50 px-2.5 py-1 rounded-full"></span>
+        <!-- TAB 2: DIARY GENERATOR (WIDE EXPANDED SPACIALLY BALANCED DESIGN) -->
+        <section id="diaryTab" class="hidden space-y-6">
+            
+            <!-- MAIN ENTRY FORM (FULL WIDTH SPACIOUS CARD) -->
+            <div class="bg-slate-900 rounded-2xl shadow-2xl p-6 sm:p-8 border border-blue-900/50">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-slate-800 gap-2">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Daily Class Diary Entry</h2>
+                        <p class="text-xs sm:text-sm text-slate-400">Class homework details barhayen aur asaani se diary generate karein.</p>
                     </div>
-
-                    <form id="entryForm" onsubmit="saveDiaryEntry(event)">
-                        <div class="grid grid-cols-2 gap-2 mb-3">
-                            <div>
-                                <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Select Class</label>
-                                <select id="diaryClass" onchange="loadClassDiary(this.value)" class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg focus:outline-none focus:border-blue-500" required>
-                                    <option value="">-- Choose Class --</option>
-                                    <option value="Playgroup">Playgroup</option>
-                                    <option value="Nursery">Nursery</option>
-                                    <option value="Prep">Prep</option>
-                                    <option value="Class 1">Class 1</option>
-                                    <option value="Class 2">Class 2</option>
-                                    <option value="Class 3">Class 3</option>
-                                    <option value="Class 4">Class 4</option>
-                                    <option value="Class 5">Class 5</option>
-                                    <option value="Class 6">Class 6</option>
-                                    <option value="Class 7">Class 7</option>
-                                    <option value="Class 8">Class 8</option>
-                                    <option value="Class 9">Class 9</option>
-                                    <option value="Class 10">Class 10</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Date</label>
-                                <input type="date" id="diaryDate" class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg focus:outline-none focus:border-blue-500" required>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-2 mb-3">
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-300">English</label>
-                                <textarea id="d_english" placeholder="English homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-300">Urdu</label>
-                                <textarea id="d_urdu" placeholder="Urdu homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-300">Math</label>
-                                <textarea id="d_math" placeholder="Math homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-300">Islamiyat</label>
-                                <textarea id="d_islamiyat" placeholder="Islamiyat homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-300">SST</label>
-                                <textarea id="d_sst" placeholder="SST homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase text-slate-300">Science</label>
-                                <textarea id="d_science" placeholder="Science homework..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">General Note / Announcements</label>
-                            <textarea id="d_generalNote" placeholder="e.g. Test on Monday..." class="w-full p-2 text-xs bg-slate-950 text-white border border-blue-900/60 rounded-lg h-10 resize-none focus:border-blue-500"></textarea>
-                        </div>
-
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 text-xs sm:text-sm rounded-lg shadow transition">
-                            💾 Save / Update Class Diary
-                        </button>
-                    </form>
+                    <span id="liveDateDisplay" class="text-xs sm:text-sm font-bold bg-slate-950 text-blue-300 border border-blue-900/60 px-4 py-1.5 rounded-full"></span>
                 </div>
 
-                <div class="bg-slate-900 rounded-2xl shadow-xl p-4 border border-blue-900/50 flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
-                            <h2 class="text-base font-bold text-white">Saved Class Cards</h2>
-                            <span id="classCountBadge" class="text-xs font-semibold bg-blue-950 text-blue-300 border border-blue-800 px-2.5 py-0.5 rounded-full">0 Saved</span>
+                <form id="entryForm" onsubmit="saveDiaryEntry(event)">
+                    <!-- TOP CONTROLS -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-slate-950 p-4 rounded-xl border border-blue-900/40">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">Select Class</label>
+                            <select id="diaryClass" onchange="loadClassDiary(this.value)" class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/80 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold" required>
+                                <option value="">-- Choose Class --</option>
+                                <option value="Playgroup">Playgroup</option>
+                                <option value="Nursery">Nursery</option>
+                                <option value="Prep">Prep</option>
+                                <option value="Class 1">Class 1</option>
+                                <option value="Class 2">Class 2</option>
+                                <option value="Class 3">Class 3</option>
+                                <option value="Class 4">Class 4</option>
+                                <option value="Class 5">Class 5</option>
+                                <option value="Class 6">Class 6</option>
+                                <option value="Class 7">Class 7</option>
+                                <option value="Class 8">Class 8</option>
+                                <option value="Class 9">Class 9</option>
+                                <option value="Class 10">Class 10</option>
+                            </select>
                         </div>
-
-                        <div class="flex flex-wrap gap-2 mb-3">
-                            <button onclick="generateAndPrintAll()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm flex justify-center items-center gap-1">
-                                🖨️ Print Window
-                            </button>
-                            <button onclick="downloadImage()" id="downloadImgBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm flex justify-center items-center gap-1">
-                                🖼️ Download Image Only
-                            </button>
-                            <button onclick="clearAllData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-3 rounded-lg text-xs transition border border-slate-700">
-                                Reset All
-                            </button>
-                        </div>
-
-                        <div id="summaryContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-96 overflow-y-auto pr-1">
-                            <p class="text-xs text-slate-500 col-span-2 py-8 text-center">No class diaries saved yet.</p>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-blue-900/40">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">Date</label>
+                            <input type="date" id="diaryDate" class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/80 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold" required>
                         </div>
                     </div>
+
+                    <!-- SUBJECT TEXTAREAS (3 COLUMNS ON DESKTOP, LARGE ACCESSIBLE INPUTS) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">English</label>
+                            <textarea id="d_english" placeholder="English homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                        </div>
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">Urdu</label>
+                            <textarea id="d_urdu" placeholder="Urdu homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                        </div>
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">Math</label>
+                            <textarea id="d_math" placeholder="Math homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                        </div>
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">Islamiyat</label>
+                            <textarea id="d_islamiyat" placeholder="Islamiyat homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                        </div>
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">SST</label>
+                            <textarea id="d_sst" placeholder="SST homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                        </div>
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">Science</label>
+                            <textarea id="d_science" placeholder="Science homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- GENERAL ANNOUNCEMENTS -->
+                    <div class="bg-slate-950 p-4 rounded-xl border border-amber-900/30 mb-6">
+                        <label class="block text-xs font-bold uppercase text-amber-400 mb-2">General Note / Announcements for Parents</label>
+                        <textarea id="d_generalNote" placeholder="e.g. Test on Monday, Kindly sign diary daily..." class="w-full p-3 text-sm bg-slate-900 text-white border border-amber-900/50 rounded-lg h-20 resize-y focus:ring-2 focus:ring-amber-500 focus:outline-none placeholder-slate-600"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3.5 text-base sm:text-lg rounded-xl shadow-lg transition transform active:scale-95">
+                        💾 Save / Update Class Diary
+                    </button>
+                </form>
+            </div>
+
+            <!-- SAVED CARDS & DOWNLOAD CONTROLS SECTION -->
+            <div class="bg-slate-900 rounded-2xl shadow-xl p-6 border border-blue-900/50 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-slate-800 gap-3">
+                    <div class="flex items-center gap-3">
+                        <h3 class="text-lg font-bold text-white">Saved Class Cards</h3>
+                        <span id="classCountBadge" class="text-xs font-bold bg-blue-950 text-blue-300 border border-blue-800 px-3 py-1 rounded-full">0 Saved</span>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2.5 w-full sm:w-auto">
+                        <button onclick="generateAndPrintAll()" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition shadow-sm flex justify-center items-center gap-1.5">
+                            🖨️ Print Window
+                        </button>
+                        <button onclick="downloadImage()" id="downloadImgBtn" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition shadow-sm flex justify-center items-center gap-1.5">
+                            🖼️ Download Image Only
+                        </button>
+                        <button onclick="clearAllData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition border border-slate-700">
+                            Reset All
+                        </button>
+                    </div>
+                </div>
+
+                <div id="summaryContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <p class="text-sm text-slate-500 col-span-full py-8 text-center">No class diaries saved yet.</p>
                 </div>
             </div>
+
         </section>
 
         <!-- TAB 3: MADAM VIEW -->
-        <section id="madamTab" class="hidden bg-slate-900 rounded-2xl shadow-xl p-4 border border-blue-900/50">
+        <section id="madamTab" class="hidden bg-slate-900 rounded-2xl shadow-xl p-4 sm:p-6 border border-blue-900/50 max-w-5xl mx-auto">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-2 border-b border-slate-800">
                 <div class="flex items-center gap-2 flex-wrap">
                     <h2 class="text-lg sm:text-xl font-bold text-white">Madam Dashboard</h2>
@@ -659,19 +667,19 @@
             countBadge.innerText = `${keys.length} Saved`;
 
             if (keys.length === 0) {
-                container.innerHTML = '<p class="text-xs text-slate-500 col-span-2 py-8 text-center">No class diaries saved yet.</p>';
+                container.innerHTML = '<p class="text-sm text-slate-500 col-span-full py-8 text-center">No class diaries saved yet.</p>';
                 return;
             }
 
             keys.forEach(cls => {
                 const item = diaryStore[cls];
                 const cardHtml = `
-                    <div class="border border-blue-900/50 rounded-lg p-2.5 bg-slate-950 text-xs">
-                        <div class="flex justify-between items-center pb-1 mb-1 border-b border-slate-800">
-                            <span class="font-bold text-white">${cls}</span>
-                            <button onclick="deleteClass('${cls}')" class="text-[10px] bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 px-1.5 py-0.5 rounded">Delete</button>
+                    <div class="border border-blue-900/50 rounded-xl p-3 bg-slate-950 text-xs">
+                        <div class="flex justify-between items-center pb-2 mb-2 border-b border-slate-800">
+                            <span class="font-bold text-white text-sm">${cls}</span>
+                            <button onclick="deleteClass('${cls}')" class="text-[10px] bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 px-2 py-0.5 rounded-md font-semibold">Delete</button>
                         </div>
-                        <div class="space-y-0.5 text-[11px] text-slate-300">
+                        <div class="space-y-1 text-xs text-slate-300">
                             <div><strong class="text-blue-400">Eng:</strong> ${item.english}</div>
                             <div><strong class="text-blue-400">Urdu:</strong> ${item.urdu}</div>
                             <div><strong class="text-blue-400">Math:</strong> ${item.math}</div>
@@ -783,7 +791,6 @@
             downloadBtn.disabled = true;
             downloadBtn.innerText = "⏳ Generating...";
 
-            // Dedicated hidden temp container for individual rendering
             let tempDiv = document.createElement('div');
             tempDiv.style.position = 'fixed';
             tempDiv.style.left = '-9999px';
@@ -794,7 +801,6 @@
 
             try {
                 if (keys.length === 1) {
-                    // Single class - Direct image download
                     const cls = keys[0];
                     const slipEl = createSingleSlipElement(cls, diaryStore[cls]);
                     tempDiv.appendChild(slipEl);
@@ -811,7 +817,6 @@
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 } else {
-                    // Multiple classes - Generate ZIP containing individual images
                     const zip = new JSZip();
 
                     for (let cls of keys) {
