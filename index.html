@@ -226,15 +226,13 @@
 
     <div class="portal-container max-w-7xl mx-auto p-3 sm:p-5">
 
-        <!-- TAB 1: LIVE REPORTING (FULL SCREEN WIZARD FLOW WITH VOICE-TO-TRANSLATE) -->
+        <!-- TAB 1: LIVE REPORTING -->
         <section id="reporterTab" class="space-y-3 max-w-4xl mx-auto">
             <form id="reportForm" onsubmit="submitReport(event)" class="bg-slate-900/90 rounded-2xl shadow-2xl p-4 sm:p-6 border border-blue-900/50 backdrop-blur-sm">
-                
                 <input type="hidden" id="teacherName" required>
                 <input type="hidden" id="className" required>
                 <input type="hidden" id="subjectName" required>
 
-                <!-- TOP BAR WITH SELECTED SUMMARY -->
                 <div class="flex justify-between items-center pb-3 mb-4 border-b border-slate-800">
                     <div>
                         <h2 class="text-base sm:text-xl font-extrabold text-white">Live Progress Report</h2>
@@ -243,7 +241,6 @@
                     <button type="button" onclick="goToStep(1)" class="text-xs bg-slate-800 hover:bg-slate-700 text-blue-300 px-3 py-1.5 rounded-lg font-semibold border border-blue-900/60 transition">Start Over 🔄</button>
                 </div>
 
-                <!-- LIVE BREADCRUMB BADGES -->
                 <div id="selectionSummary" class="flex flex-wrap gap-2 mb-4 hidden">
                     <span id="badgeTeacher" class="bg-blue-950 text-blue-200 border border-blue-600 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1"></span>
                     <span id="badgeClass" class="bg-blue-950 text-blue-200 border border-blue-600 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1"></span>
@@ -312,7 +309,7 @@
                     </div>
                 </div>
 
-                <!-- STEP 4: VOICE INPUT & DETAILS SUBMIT -->
+                <!-- STEP 4: DETAILS SUBMIT -->
                 <div id="wizardStep4" class="space-y-4 hidden">
                     <div class="flex justify-between items-center">
                         <button type="button" onclick="goToStep(3)" class="text-xs bg-slate-800 text-blue-300 border border-blue-900 px-3 py-1 rounded-lg font-bold hover:bg-slate-700">← Back to Step 3</button>
@@ -322,14 +319,11 @@
                     <div class="space-y-2">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                             <label class="block text-sm sm:text-base font-bold text-white">Aaj Class Me Kya Parhaya? (Lesson / Work Done)</label>
-                            
-                            <!-- SMART VOICE MIC BUTTON -->
                             <button type="button" id="micBtn" onclick="toggleVoiceInput()" class="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white border border-red-400 font-bold px-3.5 py-1.5 rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
                                 🎙️ Speak Urdu (Auto-Type in English)
                             </button>
                         </div>
 
-                        <!-- LIVE VOICE STATUS INDICATOR -->
                         <div id="voiceStatus" class="hidden text-xs text-amber-400 bg-amber-950/80 border border-amber-800/60 px-3 py-1.5 rounded-lg flex items-center gap-2">
                             <span class="inline-block w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
                             <span id="voiceStatusText">Listening Urdu voice... Aawaz bolain...</span>
@@ -346,26 +340,20 @@
             </form>
         </section>
 
-        <!-- TAB 2: DIARY GENERATOR (PREMIUM DASHBOARD SPLIT VIEW) -->
+        <!-- TAB 2: DIARY GENERATOR & NEXT DAY PUSH ENGINE -->
         <section id="diaryTab" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
                 
-                <!-- LEFT COLUMN: INPUT FORM (7 COLUMNS) -->
                 <div class="lg:col-span-7 bg-slate-900/90 rounded-2xl shadow-2xl p-4 sm:p-6 border border-blue-900/40 backdrop-blur-sm space-y-4">
-                    
                     <div class="flex justify-between items-center pb-3 border-b border-slate-800">
                         <div>
-                            <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                                📖 Daily Class Diary Entry
-                            </h2>
+                            <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">📖 Daily Class Diary Entry</h2>
                             <p class="text-xs text-slate-400">Class and subjects details bharain.</p>
                         </div>
                         <span id="liveDateDisplay" class="text-xs font-semibold bg-slate-950 text-blue-300 border border-blue-900/60 px-3 py-1 rounded-full"></span>
                     </div>
 
                     <form id="entryForm" onsubmit="saveDiaryEntry(event)" class="space-y-4">
-                        
-                        <!-- CONTROLS: CLASS & DATE -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div class="bg-slate-950/80 p-3 rounded-xl border border-blue-900/30">
                                 <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-1">Select Class</label>
@@ -392,7 +380,6 @@
                             </div>
                         </div>
 
-                        <!-- SUBJECT INPUTS GRID -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
                                 <label class="block text-xs font-bold uppercase text-blue-300 mb-1">English</label>
@@ -420,7 +407,6 @@
                             </div>
                         </div>
 
-                        <!-- ANNOUNCEMENT NOTE -->
                         <div class="bg-slate-950/80 p-3 rounded-xl border border-amber-900/30">
                             <label class="block text-xs font-bold uppercase text-amber-400 mb-1">Parent Announcement / General Note</label>
                             <textarea id="d_generalNote" placeholder="e.g. Test on Monday, sign diary daily..." class="w-full p-2.5 text-xs bg-slate-900 text-white border border-amber-900/50 rounded-lg h-16 resize-y focus:ring-2 focus:ring-amber-500 focus:outline-none placeholder-slate-600"></textarea>
@@ -432,9 +418,7 @@
                     </form>
                 </div>
 
-                <!-- RIGHT COLUMN: SAVED CARDS SIDEBAR (5 COLUMNS) -->
                 <div class="lg:col-span-5 bg-slate-900/90 rounded-2xl shadow-2xl p-4 sm:p-5 border border-blue-900/40 backdrop-blur-sm space-y-4">
-                    
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-slate-800 gap-2">
                         <div class="flex items-center gap-2">
                             <h3 class="text-base font-bold text-white">Saved Class Cards</h3>
@@ -442,55 +426,70 @@
                         </div>
                     </div>
 
-                    <!-- ACTION BUTTONS TOOLBAR -->
                     <div class="grid grid-cols-3 gap-2">
-                        <button onclick="generateAndPrintAll()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-2.5 rounded-xl text-xs transition shadow-sm flex justify-center items-center gap-1 text-center">
-                            🖨️ Print
-                        </button>
-                        <button onclick="downloadImage()" id="downloadImgBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-2.5 rounded-xl text-xs transition shadow-sm flex justify-center items-center gap-1 text-center">
-                            🖼️ Download
-                        </button>
-                        <button onclick="clearAllData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-2.5 rounded-xl text-xs transition border border-slate-700 text-center">
-                            Reset All
-                        </button>
+                        <button onclick="generateAndPrintAll()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-2.5 rounded-xl text-xs transition shadow-sm flex justify-center items-center gap-1 text-center">🖨️ Print</button>
+                        <button onclick="downloadImage()" id="downloadImgBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-2.5 rounded-xl text-xs transition shadow-sm flex justify-center items-center gap-1 text-center">🖼️ Download</button>
+                        <button onclick="clearAllData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-2.5 rounded-xl text-xs transition border border-slate-700 text-center">Reset All</button>
                     </div>
 
-                    <!-- SCROLLABLE SAVED CARDS CONTAINER -->
                     <div id="summaryContainer" class="space-y-3 max-h-[580px] overflow-y-auto pr-1 custom-scroll">
                         <p class="text-xs text-slate-500 py-12 text-center">No class diaries saved yet.</p>
                     </div>
-
                 </div>
 
             </div>
         </section>
 
-        <!-- TAB 3: MADAM VIEW -->
-        <section id="madamTab" class="hidden bg-slate-900/90 rounded-2xl shadow-xl p-4 sm:p-6 border border-blue-900/50 max-w-5xl mx-auto backdrop-blur-sm">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-2 border-b border-slate-800">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <h2 class="text-lg sm:text-xl font-bold text-white">Madam Dashboard</h2>
-                    <button onclick="clearAllReports()" class="text-xs bg-red-900 hover:bg-red-800 text-white border border-red-700 px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 shadow-sm">
-                        🗑️ Clear All Reports
+        <!-- TAB 3: MADAM VIEW (WITH SUBJECT-LEVEL REAL-TIME TRACKER) -->
+        <section id="madamTab" class="hidden space-y-5 max-w-5xl mx-auto">
+            
+            <!-- SECTION A: COORDINATOR PER-SUBJECT DIARY TRACKER -->
+            <div class="bg-slate-900/90 rounded-2xl shadow-xl p-4 sm:p-6 border border-emerald-900/50 backdrop-blur-sm">
+                <div class="flex justify-between items-center pb-3 mb-4 border-b border-slate-800">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-bold text-emerald-400 flex items-center gap-2">
+                            📅 Tomorrow's Class Routine Tracker
+                        </h2>
+                        <p class="text-xs text-slate-400">Coordinator Check: Verify period-wise diary progress as teachers take classes.</p>
+                    </div>
+                    <button onclick="clearAllDailySchedules()" class="text-xs bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 px-2.5 py-1 rounded-lg font-bold transition">
+                        🗑️ Reset Tracker
                     </button>
-                    <button onclick="logoutMadam()" class="text-xs bg-slate-800 hover:bg-slate-700 text-red-300 border border-slate-700 px-2 py-1 rounded font-semibold transition" title="Logout Madam">Logout 🔒</button>
                 </div>
-                <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                    <button onclick="enableSoundAndPermission()" class="bg-blue-950 hover:bg-blue-900 text-blue-200 border border-blue-700 text-xs px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1 shadow-sm">
-                        🔔 Enable Sound & Alerts
-                    </button>
-                    <span id="reportCount" class="bg-slate-950 text-blue-300 border border-blue-900/60 text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap">0 Reports</span>
+
+                <div id="scheduleTrackerList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <p class="text-slate-500 text-center py-6 text-sm col-span-2">No active class routines pushed for tomorrow.</p>
                 </div>
             </div>
 
-            <div id="toastNotif" class="hidden mb-4 bg-blue-950 border-l-4 border-blue-500 text-blue-100 p-3 rounded shadow-sm text-xs sm:text-sm" role="alert">
-                <p class="font-bold">Naya Notification!</p>
-                <p id="toastMsg">Aik naye period ki report submit hui hai.</p>
+            <!-- SECTION B: LIVE TEACHER REPORTS -->
+            <div class="bg-slate-900/90 rounded-2xl shadow-xl p-4 sm:p-6 border border-blue-900/50 backdrop-blur-sm">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-2 border-b border-slate-800">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h2 class="text-lg sm:text-xl font-bold text-white">Madam Dashboard</h2>
+                        <button onclick="clearAllReports()" class="text-xs bg-red-900 hover:bg-red-800 text-white border border-red-700 px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 shadow-sm">
+                            🗑️ Clear All Reports
+                        </button>
+                        <button onclick="logoutMadam()" class="text-xs bg-slate-800 hover:bg-slate-700 text-red-300 border border-slate-700 px-2 py-1 rounded font-semibold transition">Logout 🔒</button>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                        <button onclick="enableSoundAndPermission()" class="bg-blue-950 hover:bg-blue-900 text-blue-200 border border-blue-700 text-xs px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1 shadow-sm">
+                            🔔 Enable Sound & Alerts
+                        </button>
+                        <span id="reportCount" class="bg-slate-950 text-blue-300 border border-blue-900/60 text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap">0 Reports</span>
+                    </div>
+                </div>
+
+                <div id="toastNotif" class="hidden mb-4 bg-blue-950 border-l-4 border-blue-500 text-blue-100 p-3 rounded shadow-sm text-xs sm:text-sm" role="alert">
+                    <p class="font-bold">Naya Notification!</p>
+                    <p id="toastMsg">Aik naye period ki report submit hui hai.</p>
+                </div>
+
+                <div id="reportsList" class="space-y-3">
+                    <p class="text-slate-500 text-center py-6 text-sm">Loading reports...</p>
+                </div>
             </div>
 
-            <div id="reportsList" class="space-y-3">
-                <p class="text-slate-500 text-center py-6 text-sm">Loading reports...</p>
-            </div>
         </section>
 
     </div>
@@ -511,7 +510,7 @@
         </div>
     </div>
 
-    <!-- EXECUTIVE SLIPS CONTAINER (IMAGE / PRINT OUTPUT GENERATOR) -->
+    <!-- EXECUTIVE SLIPS CONTAINER -->
     <div id="slipsContainer" class="slips-container"></div>
 
     <script>
@@ -532,101 +531,60 @@
         let audioCtx = null;
         let diaryStore = {};
 
-        // SPEECH RECOGNITION & MEDIARECORDER FALLBACK ENGINE
         let recognition = null;
         let isRecording = false;
-        let mediaRecorder = null;
-        let audioChunks = [];
 
         const todayStr = new Date().toISOString().split('T')[0];
         document.getElementById('diaryDate').value = todayStr;
         document.getElementById('liveDateDisplay').innerText = `Date: ${todayStr}`;
 
-        function initSpeechRecognition() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) return null;
-
-            const rec = new SpeechRecognition();
-            rec.lang = 'ur-PK';
-            rec.continuous = false;
-            rec.interimResults = false;
-
-            rec.onstart = function() {
-                isRecording = true;
-                updateMicUI(true, 'Listening Urdu voice... Aawaz bolain...');
-            };
-
-            rec.onresult = async function(event) {
-                const urduText = event.results[0][0].transcript;
-                document.getElementById('voiceStatusText').innerText = `Urdu Detected: "${urduText}" -> Translating to English...`;
-
-                try {
-                    const translatedEng = await translateUrduToEnglish(urduText);
-                    appendToWorkDone(translatedEng);
-                    document.getElementById('voiceStatusText').innerText = `✔ Translated & Typed in English!`;
-                } catch (err) {
-                    appendToWorkDone(urduText);
-                }
-            };
-
-            rec.onerror = function(event) {
-                console.log('Speech API Error, switching to Direct Audio Recorder:', event.error);
-                startMediaRecorderFallback();
-            };
-
-            rec.onend = function() {
-                if (isRecording && !mediaRecorder) stopVoiceRecording();
-            };
-
-            return rec;
-        }
-
         async function toggleVoiceInput() {
             if (isRecording) {
                 if (recognition) try { recognition.stop(); } catch(e){}
-                if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
                 stopVoiceRecording();
                 return;
             }
 
-            recognition = initSpeechRecognition();
-            if (recognition) {
-                try {
-                    recognition.start();
-                } catch(e) {
-                    startMediaRecorderFallback();
-                }
-            } else {
-                startMediaRecorderFallback();
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Browser Speech Recognition support nahi karta. Google Chrome use karein.");
+                return;
             }
-        }
 
-        async function startMediaRecorderFallback() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                audioChunks = [];
-                mediaRecorder = new MediaRecorder(stream);
+                recognition = new SpeechRecognition();
+                recognition.lang = 'ur-PK';
+                recognition.continuous = false;
+                recognition.interimResults = false;
 
-                mediaRecorder.ondataavailable = event => {
-                    audioChunks.push(event.data);
+                recognition.onstart = function() {
+                    isRecording = true;
+                    updateMicUI(true, 'Listening Urdu voice... Abhi aawaz bolain...');
                 };
 
-                mediaRecorder.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    document.getElementById('voiceStatusText').innerText = 'Audio recorded. Processing speech...';
-                    
-                    // Fallback simulated transcribe prompt
-                    setTimeout(() => {
-                        document.getElementById('voiceStatusText').innerText = '✔ Audio captured! Type text or retry voice.';
-                        stopVoiceRecording();
-                    }, 1200);
+                recognition.onresult = async function(event) {
+                    const urduText = event.results[0][0].transcript;
+                    document.getElementById('voiceStatusText').innerText = `Urdu: "${urduText}" -> Translating to English...`;
+
+                    try {
+                        const translatedEng = await translateUrduToEnglish(urduText);
+                        appendToWorkDone(translatedEng);
+                        document.getElementById('voiceStatusText').innerText = `✔ Auto-Typed in English!`;
+                    } catch (err) {
+                        appendToWorkDone(urduText);
+                    }
                 };
 
-                mediaRecorder.start();
-                isRecording = true;
-                updateMicUI(true, 'Recording direct microphone audio... Click to stop.');
-            } catch (err) {
-                alert("Microphone permission denied or device unavailable.");
+                recognition.onerror = function(event) {
+                    stopVoiceRecording();
+                };
+
+                recognition.onend = function() {
+                    stopVoiceRecording();
+                };
+
+                recognition.start();
+            } catch(e) {
                 stopVoiceRecording();
             }
         }
@@ -691,7 +649,6 @@
             }
         }
 
-        /* SCREEN-BY-SCREEN WIZARD CONTROLLER */
         function goToStep(stepNumber) {
             document.getElementById('wizardStep1').classList.add('hidden');
             document.getElementById('wizardStep2').classList.add('hidden');
@@ -720,20 +677,9 @@
             }
         }
 
-        function chooseTeacher(name) {
-            document.getElementById('teacherName').value = name;
-            goToStep(2);
-        }
-
-        function chooseClass(cls) {
-            document.getElementById('className').value = cls;
-            goToStep(3);
-        }
-
-        function chooseSubject(subj) {
-            document.getElementById('subjectName').value = subj;
-            goToStep(4);
-        }
+        function chooseTeacher(name) { document.getElementById('teacherName').value = name; goToStep(2); }
+        function chooseClass(cls) { document.getElementById('className').value = cls; goToStep(3); }
+        function chooseSubject(subj) { document.getElementById('subjectName').value = subj; goToStep(4); }
 
         function updateBadges() {
             const t = document.getElementById('teacherName').value;
@@ -745,9 +691,7 @@
             const badgeC = document.getElementById('badgeClass');
             const badgeS = document.getElementById('badgeSubject');
 
-            if (t || c || s) {
-                summary.classList.remove('hidden');
-            }
+            if (t || c || s) summary.classList.remove('hidden');
 
             if (t) { badgeT.innerHTML = `👤 ${t}`; badgeT.classList.remove('hidden'); } else { badgeT.classList.add('hidden'); }
             if (c) { badgeC.innerHTML = `🏫 ${c}`; badgeC.classList.remove('hidden'); } else { badgeC.classList.add('hidden'); }
@@ -849,6 +793,31 @@
             }, 2000);
         }
 
+        /* PUSH DIARY TO TOMORROW'S ROUTINE TRACKER IN FIRESTORE WITH SUBJECT STATUS */
+        function pushToTomorrowSchedule(cls) {
+            if (!diaryStore[cls]) return;
+
+            const item = diaryStore[cls];
+            const docId = `${cls.replace(/\s+/g, '_')}_${item.date}`;
+
+            db.collection('daily_schedules').doc(docId).set({
+                className: cls,
+                date: item.date,
+                details: item,
+                followedSubjects: {
+                    english: false,
+                    urdu: false,
+                    math: false,
+                    islamiyat: false,
+                    sst: false,
+                    science: false
+                },
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert(`✔ ${cls} ki diary Kal (Tomorrow's Schedule) me shift ho gayi hai! Coordinator ab per-subject tracking kar sakain ge.`);
+            }).catch(err => alert("Error: " + err.message));
+        }
+
         function renderSummary() {
             const container = document.getElementById('summaryContainer');
             const countBadge = document.getElementById('classCountBadge');
@@ -856,11 +825,6 @@
 
             const keys = Object.keys(diaryStore);
             countBadge.innerText = `${keys.length} Saved`;
-            countBadge.className = "text-xs font-bold bg-emerald-950 text-emerald-300 border border-emerald-600 px-2.5 py-0.5 rounded-full transition-all";
-
-            setTimeout(() => {
-                countBadge.className = "text-xs font-bold bg-blue-950 text-blue-300 border border-blue-800 px-2.5 py-0.5 rounded-full transition-all";
-            }, 1500);
 
             if (keys.length === 0) {
                 container.innerHTML = '<p class="text-xs text-slate-500 py-12 text-center">No class diaries saved yet.</p>';
@@ -870,7 +834,7 @@
             keys.forEach(cls => {
                 const item = diaryStore[cls];
                 const cardHtml = `
-                    <div class="border border-blue-900/50 rounded-xl p-3 bg-slate-950/80 text-xs shadow-md space-y-1.5">
+                    <div class="border border-blue-900/50 rounded-xl p-3 bg-slate-950/80 text-xs shadow-md space-y-2">
                         <div class="flex justify-between items-center pb-1.5 border-b border-slate-800">
                             <span class="font-extrabold text-white text-sm">${cls}</span>
                             <button onclick="deleteClass('${cls}')" class="text-[10px] bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 px-2 py-0.5 rounded-md font-semibold transition">Delete</button>
@@ -883,6 +847,9 @@
                             <div><strong class="text-blue-400">SST:</strong> ${item.sst}</div>
                             <div><strong class="text-blue-400">Sci:</strong> ${item.science}</div>
                         </div>
+                        <button onclick="pushToTomorrowSchedule('${cls}')" class="w-full bg-indigo-900/80 hover:bg-indigo-800 text-indigo-200 border border-indigo-600 text-[11px] font-bold py-1.5 rounded-lg transition shadow-sm flex items-center justify-center gap-1">
+                            🚀 Push to Tomorrow's Schedule
+                        </button>
                     </div>
                 `;
                 container.innerHTML += cardHtml;
@@ -999,36 +966,22 @@
                     const slipEl = createSingleSlipElement(cls, diaryStore[cls]);
                     tempDiv.appendChild(slipEl);
 
-                    const canvas = await html2canvas(slipEl, {
-                        scale: 2,
-                        useCORS: true,
-                        backgroundColor: '#ffffff',
-                        width: 800
-                    });
-
+                    const canvas = await html2canvas(slipEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff', width: 800 });
                     const link = document.createElement('a');
                     link.download = `Diary_${cls.replace(/\s+/g, '_')}_${todayStr}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 } else {
                     const zip = new JSZip();
-
                     for (let cls of keys) {
                         tempDiv.innerHTML = '';
                         const slipEl = createSingleSlipElement(cls, diaryStore[cls]);
                         tempDiv.appendChild(slipEl);
 
-                        const canvas = await html2canvas(slipEl, {
-                            scale: 2,
-                            useCORS: true,
-                            backgroundColor: '#ffffff',
-                            width: 800
-                        });
-
+                        const canvas = await html2canvas(slipEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff', width: 800 });
                         const imgData = canvas.toDataURL('image/png').split(',')[1];
                         zip.file(`Diary_${cls.replace(/\s+/g, '_')}_${todayStr}.png`, imgData, {base64: true});
                     }
-
                     const content = await zip.generateAsync({type: "blob"});
                     saveAs(content, `PineHills_Diaries_${todayStr}.zip`);
                 }
@@ -1046,9 +999,7 @@
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 if (AudioContext) audioCtx = new AudioContext();
             }
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
         }
 
         function playLoudLongSmoothBell() {
@@ -1121,30 +1072,112 @@
 
         function deleteReport(docId) {
             if (confirm("Delete this report from database?")) {
-                db.collection('reports').doc(docId).delete().then(() => {
-                    showToast("Report successfully deleted!");
-                });
+                db.collection('reports').doc(docId).delete().then(() => showToast("Report successfully deleted!"));
             }
         }
 
         function clearAllReports() {
             const pwd = prompt("Tamam reports delete karne ke liye Password enter karein:");
             if (pwd === "1") {
-                if (confirm("Kya aap waqai tamaam live reports delete karna chahte hain? Pehle se mojood tamam reports permanently khatam ho jayengi.")) {
+                if (confirm("Kya aap waqai tamaam live reports delete karna chahte hain?")) {
                     db.collection('reports').get().then((snapshot) => {
                         const batch = db.batch();
-                        snapshot.forEach((doc) => {
-                            batch.delete(doc.ref);
-                        });
+                        snapshot.forEach((doc) => batch.delete(doc.ref));
                         return batch.commit();
-                    }).then(() => {
-                        showToast("Tamam reports kamyabi se delete kar di gayi hain!");
-                    }).catch((error) => {
-                        alert("Error clearing reports: " + error.message);
-                    });
+                    }).then(() => showToast("Tamam reports kamyabi se delete kar di gayi hain!"));
                 }
             } else if (pwd !== null) {
                 alert("❌ Wrong Password!");
+            }
+        }
+
+        /* REAL-TIME PER-SUBJECT TRACKER LISTENERS FOR MADAM / COORDINATOR DASHBOARD */
+        db.collection('daily_schedules').onSnapshot(snapshot => {
+            const trackerList = document.getElementById('scheduleTrackerList');
+            trackerList.innerHTML = '';
+
+            if (snapshot.empty) {
+                trackerList.innerHTML = '<p class="text-slate-500 text-center py-6 text-sm col-span-2">No active class routines pushed for tomorrow.</p>';
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const docId = doc.id;
+                const followed = data.followedSubjects || {};
+
+                const subjects = [
+                    { key: 'english', label: 'English', text: data.details.english },
+                    { key: 'urdu', label: 'Urdu', text: data.details.urdu },
+                    { key: 'math', label: 'Math', text: data.details.math },
+                    { key: 'islamiyat', label: 'Islamiyat', text: data.details.islamiyat },
+                    { key: 'sst', label: 'SST', text: data.details.sst },
+                    { key: 'science', label: 'Science', text: data.details.science }
+                ];
+
+                const doneCount = subjects.filter(s => followed[s.key]).length;
+                const totalCount = subjects.length;
+                const isAllDone = doneCount === totalCount;
+
+                let subjectsHtml = '';
+                subjects.forEach(subj => {
+                    const isChecked = followed[subj.key] || false;
+                    subjectsHtml += `
+                        <div class="flex items-start justify-between bg-slate-900/90 p-2 rounded-lg border ${isChecked ? 'border-emerald-700/60 bg-emerald-950/20' : 'border-slate-800'}">
+                            <div class="pr-2">
+                                <span class="font-bold text-xs ${isChecked ? 'text-emerald-400 line-through' : 'text-blue-300'}">${subj.label}:</span>
+                                <span class="text-xs text-slate-300 block">${subj.text}</span>
+                            </div>
+                            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSubjectFollow('${docId}', '${subj.key}', this.checked)" class="w-4 h-4 accent-emerald-500 rounded cursor-pointer mt-0.5">
+                        </div>
+                    `;
+                });
+
+                const cardHtml = `
+                    <div class="bg-slate-950 p-4 rounded-xl border ${isAllDone ? 'border-emerald-600 bg-emerald-950/20' : 'border-amber-900/50'} shadow-md space-y-3">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                            <div>
+                                <span class="font-extrabold text-white text-base">${data.className}</span>
+                                <span class="text-[10px] text-slate-400 block">Date: ${data.date}</span>
+                            </div>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold ${isAllDone ? 'bg-emerald-950 text-emerald-300 border border-emerald-600' : 'bg-amber-950 text-amber-300 border border-amber-600'}">
+                                ${isAllDone ? 'Fully Followed ✔️' : `${doneCount}/${totalCount} Done ⏳`}
+                            </span>
+                        </div>
+                        
+                        <div class="space-y-1.5">
+                            ${subjectsHtml}
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-800 flex justify-between items-center text-xs">
+                            <span class="text-slate-400 font-semibold">Teacher Period Check</span>
+                            <button onclick="deleteScheduleDoc('${docId}')" class="text-red-400 hover:underline text-[11px]">Remove Card</button>
+                        </div>
+                    </div>
+                `;
+                trackerList.innerHTML += cardHtml;
+            });
+        });
+
+        function toggleSubjectFollow(docId, subjKey, status) {
+            db.collection('daily_schedules').doc(docId).update({
+                [`followedSubjects.${subjKey}`]: status
+            });
+        }
+
+        function deleteScheduleDoc(docId) {
+            if (confirm("Remove this schedule item?")) {
+                db.collection('daily_schedules').doc(docId).delete();
+            }
+        }
+
+        function clearAllDailySchedules() {
+            if (confirm("Clear all tomorrow schedule tracking entries?")) {
+                db.collection('daily_schedules').get().then(snapshot => {
+                    const batch = db.batch();
+                    snapshot.forEach(doc => batch.delete(doc.ref));
+                    return batch.commit();
+                });
             }
         }
 
