@@ -30,7 +30,35 @@
     .chip-btn:active {
       transform: scale(0.98);
     }
-    
+
+    /* CUSTOM SCROLLBAR FOR CARDS PANEL */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #090d16;
+      border-radius: 8px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 8px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #3b82f6;
+    }
+
+    /* MIC RECORDING PULSE ANIMATION */
+    @keyframes micPulse {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .recording-active {
+      animation: micPulse 1.5s infinite;
+      background-color: #dc2626 !important;
+      border-color: #f87171 !important;
+    }
+
     /* BULLETPROOF EXECUTIVE DIARY SLIP DESIGN FOR PERFECT IMAGE RENDER */
     .slips-container { 
       display: none; 
@@ -181,26 +209,26 @@
         <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
     </audio>
 
-    <nav class="bg-black text-white p-3 shadow-lg border-b border-blue-900/50 flex justify-between items-center sticky top-0 z-40">
-        <div class="flex items-center gap-2">
-            <h1 class="text-base sm:text-xl font-bold uppercase tracking-wider text-blue-400">Pine Hills School</h1>
-            <span class="hidden sm:inline-block text-xs bg-slate-900 border border-blue-800 px-2 py-0.5 rounded text-blue-200">Management System</span>
+    <nav class="bg-black/90 backdrop-blur-md text-white p-3 shadow-xl border-b border-blue-900/40 flex justify-between items-center sticky top-0 z-40">
+        <div class="flex items-center gap-3">
+            <h1 class="text-lg sm:text-xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Pine Hills School</h1>
+            <span class="hidden sm:inline-block text-xs bg-slate-900/80 border border-blue-800/60 px-2.5 py-0.5 rounded-full text-blue-300 font-medium">Management System</span>
         </div>
         <div class="flex space-x-1 sm:space-x-2">
-            <button onclick="switchTab('reporter')" id="tabBtn-reporter" class="bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm border border-blue-900/40">📝 Live Report</button>
-            <button onclick="switchTab('diary')" id="tabBtn-diary" class="bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm border border-blue-900/40">📖 Diary Generator</button>
-            <button onclick="switchTab('madam')" id="tabBtn-madam" class="bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm border border-blue-900/40">
+            <button onclick="switchTab('reporter')" id="tabBtn-reporter" class="bg-slate-900/80 hover:bg-blue-900/50 text-blue-100 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition border border-blue-900/40">📝 Live Report</button>
+            <button onclick="switchTab('diary')" id="tabBtn-diary" class="bg-slate-900/80 hover:bg-blue-900/50 text-blue-100 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition border border-blue-900/40">📖 Diary Generator</button>
+            <button onclick="switchTab('madam')" id="tabBtn-madam" class="bg-slate-900/80 hover:bg-blue-900/50 text-blue-100 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition relative border border-blue-900/40">
                 👑 Madam View
                 <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-full animate-pulse">New</span>
             </button>
         </div>
     </nav>
 
-    <div class="portal-container max-w-7xl mx-auto p-2 sm:p-6">
+    <div class="portal-container max-w-7xl mx-auto p-3 sm:p-5">
 
-        <!-- TAB 1: LIVE REPORTING (FULL SCREEN WIZARD FLOW) -->
+        <!-- TAB 1: LIVE REPORTING (FULL SCREEN WIZARD FLOW WITH VOICE-TO-TRANSLATE) -->
         <section id="reporterTab" class="space-y-3 max-w-4xl mx-auto">
-            <form id="reportForm" onsubmit="submitReport(event)" class="bg-slate-900 rounded-2xl shadow-2xl p-4 sm:p-6 border border-blue-900/50">
+            <form id="reportForm" onsubmit="submitReport(event)" class="bg-slate-900/90 rounded-2xl shadow-2xl p-4 sm:p-6 border border-blue-900/50 backdrop-blur-sm">
                 
                 <input type="hidden" id="teacherName" required>
                 <input type="hidden" id="className" required>
@@ -210,7 +238,7 @@
                 <div class="flex justify-between items-center pb-3 mb-4 border-b border-slate-800">
                     <div>
                         <h2 class="text-base sm:text-xl font-extrabold text-white">Live Progress Report</h2>
-                        <p class="text-xs text-slate-400">Aap asaani se step-by-step report submit karein.</p>
+                        <p class="text-xs text-slate-400">Step-by-step report submit karein.</p>
                     </div>
                     <button type="button" onclick="goToStep(1)" class="text-xs bg-slate-800 hover:bg-slate-700 text-blue-300 px-3 py-1.5 rounded-lg font-semibold border border-blue-900/60 transition">Start Over 🔄</button>
                 </div>
@@ -284,15 +312,30 @@
                     </div>
                 </div>
 
-                <!-- STEP 4: DETAILS & SUBMIT -->
+                <!-- STEP 4: VOICE INPUT & DETAILS SUBMIT -->
                 <div id="wizardStep4" class="space-y-4 hidden">
                     <div class="flex justify-between items-center">
                         <button type="button" onclick="goToStep(3)" class="text-xs bg-slate-800 text-blue-300 border border-blue-900 px-3 py-1 rounded-lg font-bold hover:bg-slate-700">← Back to Step 3</button>
                         <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Step 4 of 4</span>
                     </div>
-                    <div class="py-1">
-                        <label class="block text-sm sm:text-base font-bold text-white mb-2">Aaj Class Me Kya Parhaya? (Lesson / Work Done)</label>
-                        <textarea id="workDone" rows="4" required placeholder="Detail se likhein..." class="w-full p-3 text-sm sm:text-base bg-slate-950 text-white border-2 border-blue-900/60 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-500"></textarea>
+
+                    <div class="space-y-2">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <label class="block text-sm sm:text-base font-bold text-white">Aaj Class Me Kya Parhaya? (Lesson / Work Done)</label>
+                            
+                            <!-- SMART VOICE MIC BUTTON -->
+                            <button type="button" id="micBtn" onclick="toggleVoiceInput()" class="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white border border-red-400 font-bold px-3.5 py-1.5 rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
+                                🎙️ Speak Urdu (Auto-Type in English)
+                            </button>
+                        </div>
+
+                        <!-- LIVE VOICE STATUS INDICATOR -->
+                        <div id="voiceStatus" class="hidden text-xs text-amber-400 bg-amber-950/80 border border-amber-800/60 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                            <span class="inline-block w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                            <span id="voiceStatusText">Listening Urdu voice... Aawaz bolain...</span>
+                        </div>
+
+                        <textarea id="workDone" rows="4" required placeholder="Detail se likhein ya upar mic button se Urdu me bolain..." class="w-full p-3 text-sm sm:text-base bg-slate-950 text-white border-2 border-blue-900/60 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-500"></textarea>
                     </div>
 
                     <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3.5 text-base sm:text-lg rounded-xl shadow-lg shadow-blue-950 transition transform active:scale-95">
@@ -303,117 +346,127 @@
             </form>
         </section>
 
-        <!-- TAB 2: DIARY GENERATOR (WIDE EXPANDED SPACIALLY BALANCED DESIGN) -->
-        <section id="diaryTab" class="hidden space-y-6">
-            
-            <!-- MAIN ENTRY FORM (FULL WIDTH SPACIOUS CARD) -->
-            <div class="bg-slate-900 rounded-2xl shadow-2xl p-6 sm:p-8 border border-blue-900/50">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-slate-800 gap-2">
-                    <div>
-                        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Daily Class Diary Entry</h2>
-                        <p class="text-xs sm:text-sm text-slate-400">Class homework details barhayen aur asaani se diary generate karein.</p>
+        <!-- TAB 2: DIARY GENERATOR (PREMIUM DASHBOARD SPLIT VIEW) -->
+        <section id="diaryTab" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                
+                <!-- LEFT COLUMN: INPUT FORM (7 COLUMNS) -->
+                <div class="lg:col-span-7 bg-slate-900/90 rounded-2xl shadow-2xl p-4 sm:p-6 border border-blue-900/40 backdrop-blur-sm space-y-4">
+                    
+                    <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                                📖 Daily Class Diary Entry
+                            </h2>
+                            <p class="text-xs text-slate-400">Class and subjects details bharain.</p>
+                        </div>
+                        <span id="liveDateDisplay" class="text-xs font-semibold bg-slate-950 text-blue-300 border border-blue-900/60 px-3 py-1 rounded-full"></span>
                     </div>
-                    <span id="liveDateDisplay" class="text-xs sm:text-sm font-bold bg-slate-950 text-blue-300 border border-blue-900/60 px-4 py-1.5 rounded-full"></span>
+
+                    <form id="entryForm" onsubmit="saveDiaryEntry(event)" class="space-y-4">
+                        
+                        <!-- CONTROLS: CLASS & DATE -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-blue-900/30">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-1">Select Class</label>
+                                <select id="diaryClass" onchange="loadClassDiary(this.value)" class="w-full p-2.5 text-xs sm:text-sm bg-slate-900 text-white border border-blue-900/60 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold" required>
+                                    <option value="">-- Select Class --</option>
+                                    <option value="Playgroup">Playgroup</option>
+                                    <option value="Nursery">Nursery</option>
+                                    <option value="Prep">Prep</option>
+                                    <option value="Class 1">Class 1</option>
+                                    <option value="Class 2">Class 2</option>
+                                    <option value="Class 3">Class 3</option>
+                                    <option value="Class 4">Class 4</option>
+                                    <option value="Class 5">Class 5</option>
+                                    <option value="Class 6">Class 6</option>
+                                    <option value="Class 7">Class 7</option>
+                                    <option value="Class 8">Class 8</option>
+                                    <option value="Class 9">Class 9</option>
+                                    <option value="Class 10">Class 10</option>
+                                </select>
+                            </div>
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-blue-900/30">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-1">Date</label>
+                                <input type="date" id="diaryDate" class="w-full p-2.5 text-xs sm:text-sm bg-slate-900 text-white border border-blue-900/60 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold" required>
+                            </div>
+                        </div>
+
+                        <!-- SUBJECT INPUTS GRID -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+                                <label class="block text-xs font-bold uppercase text-blue-300 mb-1">English</label>
+                                <textarea id="d_english" placeholder="English homework..." class="w-full p-2.5 text-xs bg-slate-900 text-white border border-blue-900/40 rounded-lg h-20 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                            </div>
+                            <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+                                <label class="block text-xs font-bold uppercase text-blue-300 mb-1">Urdu</label>
+                                <textarea id="d_urdu" placeholder="Urdu homework..." class="w-full p-2.5 text-xs bg-slate-900 text-white border border-blue-900/40 rounded-lg h-20 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                            </div>
+                            <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+                                <label class="block text-xs font-bold uppercase text-blue-300 mb-1">Math</label>
+                                <textarea id="d_math" placeholder="Math homework..." class="w-full p-2.5 text-xs bg-slate-900 text-white border border-blue-900/40 rounded-lg h-20 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                            </div>
+                            <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+                                <label class="block text-xs font-bold uppercase text-blue-300 mb-1">Islamiyat</label>
+                                <textarea id="d_islamiyat" placeholder="Islamiyat homework..." class="w-full p-2.5 text-xs bg-slate-900 text-white border border-blue-900/40 rounded-lg h-20 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                            </div>
+                            <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+                                <label class="block text-xs font-bold uppercase text-blue-300 mb-1">SST</label>
+                                <textarea id="d_sst" placeholder="SST homework..." class="w-full p-2.5 text-xs bg-slate-900 text-white border border-blue-900/40 rounded-lg h-20 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                            </div>
+                            <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+                                <label class="block text-xs font-bold uppercase text-blue-300 mb-1">Science</label>
+                                <textarea id="d_science" placeholder="Science homework..." class="w-full p-2.5 text-xs bg-slate-900 text-white border border-blue-900/40 rounded-lg h-20 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- ANNOUNCEMENT NOTE -->
+                        <div class="bg-slate-950/80 p-3 rounded-xl border border-amber-900/30">
+                            <label class="block text-xs font-bold uppercase text-amber-400 mb-1">Parent Announcement / General Note</label>
+                            <textarea id="d_generalNote" placeholder="e.g. Test on Monday, sign diary daily..." class="w-full p-2.5 text-xs bg-slate-900 text-white border border-amber-900/50 rounded-lg h-16 resize-y focus:ring-2 focus:ring-amber-500 focus:outline-none placeholder-slate-600"></textarea>
+                        </div>
+
+                        <button type="submit" id="saveDiaryBtn" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold py-3 text-sm rounded-xl shadow-lg transition transform active:scale-98 flex justify-center items-center gap-2">
+                            💾 Save / Update Class Diary
+                        </button>
+                    </form>
                 </div>
 
-                <form id="entryForm" onsubmit="saveDiaryEntry(event)">
-                    <!-- TOP CONTROLS -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                        <div class="bg-slate-950 p-4 rounded-xl border border-blue-900/40">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">Select Class</label>
-                            <select id="diaryClass" onchange="loadClassDiary(this.value)" class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/80 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold" required>
-                                <option value="">-- Choose Class --</option>
-                                <option value="Playgroup">Playgroup</option>
-                                <option value="Nursery">Nursery</option>
-                                <option value="Prep">Prep</option>
-                                <option value="Class 1">Class 1</option>
-                                <option value="Class 2">Class 2</option>
-                                <option value="Class 3">Class 3</option>
-                                <option value="Class 4">Class 4</option>
-                                <option value="Class 5">Class 5</option>
-                                <option value="Class 6">Class 6</option>
-                                <option value="Class 7">Class 7</option>
-                                <option value="Class 8">Class 8</option>
-                                <option value="Class 9">Class 9</option>
-                                <option value="Class 10">Class 10</option>
-                            </select>
-                        </div>
-                        <div class="bg-slate-950 p-4 rounded-xl border border-blue-900/40">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">Date</label>
-                            <input type="date" id="diaryDate" class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/80 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold" required>
+                <!-- RIGHT COLUMN: SAVED CARDS SIDEBAR (5 COLUMNS) -->
+                <div class="lg:col-span-5 bg-slate-900/90 rounded-2xl shadow-2xl p-4 sm:p-5 border border-blue-900/40 backdrop-blur-sm space-y-4">
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-slate-800 gap-2">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-bold text-white">Saved Class Cards</h3>
+                            <span id="classCountBadge" class="text-xs font-bold bg-blue-950 text-blue-300 border border-blue-800 px-2.5 py-0.5 rounded-full transition-all">0 Saved</span>
                         </div>
                     </div>
 
-                    <!-- SUBJECT TEXTAREAS (3 COLUMNS ON DESKTOP, LARGE ACCESSIBLE INPUTS) -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">English</label>
-                            <textarea id="d_english" placeholder="English homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
-                        </div>
-                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">Urdu</label>
-                            <textarea id="d_urdu" placeholder="Urdu homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
-                        </div>
-                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">Math</label>
-                            <textarea id="d_math" placeholder="Math homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
-                        </div>
-                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">Islamiyat</label>
-                            <textarea id="d_islamiyat" placeholder="Islamiyat homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
-                        </div>
-                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">SST</label>
-                            <textarea id="d_sst" placeholder="SST homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
-                        </div>
-                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                            <label class="block text-xs font-bold uppercase text-blue-300 mb-1.5">Science</label>
-                            <textarea id="d_science" placeholder="Science homework & details..." class="w-full p-3 text-sm bg-slate-900 text-white border border-blue-900/50 rounded-lg h-24 resize-y focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-600"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- GENERAL ANNOUNCEMENTS -->
-                    <div class="bg-slate-950 p-4 rounded-xl border border-amber-900/30 mb-6">
-                        <label class="block text-xs font-bold uppercase text-amber-400 mb-2">General Note / Announcements for Parents</label>
-                        <textarea id="d_generalNote" placeholder="e.g. Test on Monday, Kindly sign diary daily..." class="w-full p-3 text-sm bg-slate-900 text-white border border-amber-900/50 rounded-lg h-20 resize-y focus:ring-2 focus:ring-amber-500 focus:outline-none placeholder-slate-600"></textarea>
-                    </div>
-
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3.5 text-base sm:text-lg rounded-xl shadow-lg transition transform active:scale-95">
-                        💾 Save / Update Class Diary
-                    </button>
-                </form>
-            </div>
-
-            <!-- SAVED CARDS & DOWNLOAD CONTROLS SECTION -->
-            <div class="bg-slate-900 rounded-2xl shadow-xl p-6 border border-blue-900/50 space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-slate-800 gap-3">
-                    <div class="flex items-center gap-3">
-                        <h3 class="text-lg font-bold text-white">Saved Class Cards</h3>
-                        <span id="classCountBadge" class="text-xs font-bold bg-blue-950 text-blue-300 border border-blue-800 px-3 py-1 rounded-full">0 Saved</span>
-                    </div>
-
-                    <div class="flex flex-wrap gap-2.5 w-full sm:w-auto">
-                        <button onclick="generateAndPrintAll()" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition shadow-sm flex justify-center items-center gap-1.5">
-                            🖨️ Print Window
+                    <!-- ACTION BUTTONS TOOLBAR -->
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="generateAndPrintAll()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-2.5 rounded-xl text-xs transition shadow-sm flex justify-center items-center gap-1 text-center">
+                            🖨️ Print
                         </button>
-                        <button onclick="downloadImage()" id="downloadImgBtn" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition shadow-sm flex justify-center items-center gap-1.5">
-                            🖼️ Download Image Only
+                        <button onclick="downloadImage()" id="downloadImgBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-2.5 rounded-xl text-xs transition shadow-sm flex justify-center items-center gap-1 text-center">
+                            🖼️ Download
                         </button>
-                        <button onclick="clearAllData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition border border-slate-700">
+                        <button onclick="clearAllData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-2.5 rounded-xl text-xs transition border border-slate-700 text-center">
                             Reset All
                         </button>
                     </div>
+
+                    <!-- SCROLLABLE SAVED CARDS CONTAINER -->
+                    <div id="summaryContainer" class="space-y-3 max-h-[580px] overflow-y-auto pr-1 custom-scroll">
+                        <p class="text-xs text-slate-500 py-12 text-center">No class diaries saved yet.</p>
+                    </div>
+
                 </div>
 
-                <div id="summaryContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    <p class="text-sm text-slate-500 col-span-full py-8 text-center">No class diaries saved yet.</p>
-                </div>
             </div>
-
         </section>
 
         <!-- TAB 3: MADAM VIEW -->
-        <section id="madamTab" class="hidden bg-slate-900 rounded-2xl shadow-xl p-4 sm:p-6 border border-blue-900/50 max-w-5xl mx-auto">
+        <section id="madamTab" class="hidden bg-slate-900/90 rounded-2xl shadow-xl p-4 sm:p-6 border border-blue-900/50 max-w-5xl mx-auto backdrop-blur-sm">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-2 border-b border-slate-800">
                 <div class="flex items-center gap-2 flex-wrap">
                     <h2 class="text-lg sm:text-xl font-bold text-white">Madam Dashboard</h2>
@@ -479,29 +532,114 @@
         let audioCtx = null;
         let diaryStore = {};
 
+        // SPEECH RECOGNITION & TRANSLATION ENGINE
+        let recognition = null;
+        let isRecording = false;
+
         const todayStr = new Date().toISOString().split('T')[0];
         document.getElementById('diaryDate').value = todayStr;
         document.getElementById('liveDateDisplay').innerText = `Date: ${todayStr}`;
+
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Aapka browser Speech Recognition support nahi karta. Kindly Chrome use karein.");
+                return null;
+            }
+
+            const rec = new SpeechRecognition();
+            rec.lang = 'ur-PK'; // Urdu Speech Input
+            rec.continuous = false;
+            rec.interimResults = false;
+
+            rec.onstart = function() {
+                isRecording = true;
+                const micBtn = document.getElementById('micBtn');
+                const status = document.getElementById('voiceStatus');
+                micBtn.classList.add('recording-active');
+                micBtn.innerText = '🔴 Listening... (Click to Stop)';
+                status.classList.remove('hidden');
+                document.getElementById('voiceStatusText').innerText = 'Urdu me bolain... (System English me type karega)';
+            };
+
+            rec.onresult = async function(event) {
+                const urduText = event.results[0][0].transcript;
+                document.getElementById('voiceStatusText').innerText = `Urdu Detected: "${urduText}" -> Translating to English...`;
+
+                try {
+                    const translatedEng = await translateUrduToEnglish(urduText);
+                    const workBox = document.getElementById('workDone');
+                    workBox.value = workBox.value ? workBox.value + ' ' + translatedEng : translatedEng;
+                    document.getElementById('voiceStatusText').innerText = `✔ Translated & Typed in English!`;
+                } catch (err) {
+                    document.getElementById('voiceStatusText').innerText = `Translation Error. Direct Urdu typed.`;
+                    const workBox = document.getElementById('workDone');
+                    workBox.value = workBox.value ? workBox.value + ' ' + urduText : urduText;
+                }
+            };
+
+            rec.onerror = function(event) {
+                console.log('Speech error:', event.error);
+                stopVoiceRecording();
+            };
+
+            rec.onend = function() {
+                stopVoiceRecording();
+            };
+
+            return rec;
+        }
+
+        function toggleVoiceInput() {
+            if (!recognition) recognition = initSpeechRecognition();
+            if (!recognition) return;
+
+            if (isRecording) {
+                recognition.stop();
+                stopVoiceRecording();
+            } else {
+                recognition.start();
+            }
+        }
+
+        function stopVoiceRecording() {
+            isRecording = false;
+            const micBtn = document.getElementById('micBtn');
+            const status = document.getElementById('voiceStatus');
+            micBtn.classList.remove('recording-active');
+            micBtn.innerHTML = '🎙️ Speak Urdu (Auto-Type in English)';
+            setTimeout(() => status.classList.add('hidden'), 3000);
+        }
+
+        // FREE MYMEMORY URDU TO ENGLISH TRANSLATION API
+        async function translateUrduToEnglish(urduStr) {
+            const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(urduStr)}&langpair=ur|en`);
+            const data = await res.json();
+            if (data && data.responseData && data.responseData.translatedText) {
+                return data.responseData.translatedText;
+            }
+            return urduStr;
+        }
 
         function switchTab(tab) {
             document.getElementById('reporterTab').classList.add('hidden');
             document.getElementById('diaryTab').classList.add('hidden');
             document.getElementById('madamTab').classList.add('hidden');
 
-            document.getElementById('tabBtn-reporter').className = "bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm border border-blue-900/40";
-            document.getElementById('tabBtn-diary').className = "bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm border border-blue-900/40";
-            document.getElementById('tabBtn-madam').className = "bg-slate-900 hover:bg-blue-900 text-blue-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm border border-blue-900/40";
+            document.getElementById('tabBtn-reporter').className = "bg-slate-900/80 hover:bg-blue-900/50 text-blue-100 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition border border-blue-900/40";
+            document.getElementById('tabBtn-diary').className = "bg-slate-900/80 hover:bg-blue-900/50 text-blue-100 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition border border-blue-900/40";
+            document.getElementById('tabBtn-madam').className = "bg-slate-900/80 hover:bg-blue-900/50 text-blue-100 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition relative border border-blue-900/40";
 
             if (tab === 'reporter') {
                 document.getElementById('reporterTab').classList.remove('hidden');
-                document.getElementById('tabBtn-reporter').className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm ring-2 ring-blue-400";
+                document.getElementById('tabBtn-reporter').className = "bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition shadow-md ring-2 ring-blue-400";
             } else if (tab === 'diary') {
                 document.getElementById('diaryTab').classList.remove('hidden');
-                document.getElementById('tabBtn-diary').className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-center shadow-sm ring-2 ring-blue-400";
+                document.getElementById('tabBtn-diary').className = "bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition shadow-md ring-2 ring-blue-400";
             } else if (tab === 'madam') {
                 if (isMadamLoggedIn) {
                     document.getElementById('madamTab').classList.remove('hidden');
-                    document.getElementById('tabBtn-madam').className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition relative text-center shadow-sm ring-2 ring-blue-400";
+                    document.getElementById('tabBtn-madam').className = "bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition relative shadow-md ring-2 ring-blue-400";
                     document.getElementById('notifBadge').classList.add('hidden');
                 } else {
                     document.getElementById('loginModal').classList.remove('hidden');
@@ -656,6 +794,16 @@
             };
 
             renderSummary();
+
+            // VISUAL GREEN TICK ANIMATION ON SAVE BUTTON
+            const saveBtn = document.getElementById('saveDiaryBtn');
+            saveBtn.className = "w-full bg-emerald-600 text-white font-extrabold py-3 text-sm rounded-xl shadow-lg transition transform scale-102 flex justify-center items-center gap-2";
+            saveBtn.innerHTML = "✔ Diary Updated Successfully!";
+
+            setTimeout(() => {
+                saveBtn.className = "w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold py-3 text-sm rounded-xl shadow-lg transition transform scale-100 flex justify-center items-center gap-2";
+                saveBtn.innerHTML = "💾 Save / Update Class Diary";
+            }, 2000);
         }
 
         function renderSummary() {
@@ -665,19 +813,24 @@
 
             const keys = Object.keys(diaryStore);
             countBadge.innerText = `${keys.length} Saved`;
+            countBadge.className = "text-xs font-bold bg-emerald-950 text-emerald-300 border border-emerald-600 px-2.5 py-0.5 rounded-full transition-all";
+
+            setTimeout(() => {
+                countBadge.className = "text-xs font-bold bg-blue-950 text-blue-300 border border-blue-800 px-2.5 py-0.5 rounded-full transition-all";
+            }, 1500);
 
             if (keys.length === 0) {
-                container.innerHTML = '<p class="text-sm text-slate-500 col-span-full py-8 text-center">No class diaries saved yet.</p>';
+                container.innerHTML = '<p class="text-xs text-slate-500 py-12 text-center">No class diaries saved yet.</p>';
                 return;
             }
 
             keys.forEach(cls => {
                 const item = diaryStore[cls];
                 const cardHtml = `
-                    <div class="border border-blue-900/50 rounded-xl p-3 bg-slate-950 text-xs">
-                        <div class="flex justify-between items-center pb-2 mb-2 border-b border-slate-800">
-                            <span class="font-bold text-white text-sm">${cls}</span>
-                            <button onclick="deleteClass('${cls}')" class="text-[10px] bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 px-2 py-0.5 rounded-md font-semibold">Delete</button>
+                    <div class="border border-blue-900/50 rounded-xl p-3 bg-slate-950/80 text-xs shadow-md space-y-1.5">
+                        <div class="flex justify-between items-center pb-1.5 border-b border-slate-800">
+                            <span class="font-extrabold text-white text-sm">${cls}</span>
+                            <button onclick="deleteClass('${cls}')" class="text-[10px] bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 px-2 py-0.5 rounded-md font-semibold transition">Delete</button>
                         </div>
                         <div class="space-y-1 text-xs text-slate-300">
                             <div><strong class="text-blue-400">Eng:</strong> ${item.english}</div>
@@ -843,7 +996,7 @@
             } finally {
                 document.body.removeChild(tempDiv);
                 downloadBtn.disabled = false;
-                downloadBtn.innerText = "🖼️ Download Image Only";
+                downloadBtn.innerText = "🖼️ Download";
             }
         }
 
